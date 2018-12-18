@@ -1,1 +1,0 @@
-require File.join(__dir__,'test','test_helper.rb')

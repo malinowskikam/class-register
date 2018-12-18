@@ -1,12 +1,16 @@
 # Instalacja
 ```
-bundle
+install.sh
+```
+# Uruchomienie
+```
+run.sh
 ```
 # Testy w Minitest
 ```
-ruby minitest_autorun.rb
+tests_minitest.sh
 ```
 # Testy w Rspec
 ```
-rspec
+tests_rspec.sh
 ```
