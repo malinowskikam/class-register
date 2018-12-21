@@ -1,4 +1,4 @@
-require "lib/errors/errors.rb"
+require File.join($__lib__,'errors','errors.rb')
 
 class ModelGeneretor
     def generate_models db
