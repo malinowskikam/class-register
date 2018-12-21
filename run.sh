@@ -1,2 +1,2 @@
 #!/bin/bash
-echo 'tu dać odpalanie programu XD'
+bundle exec ruby './lib/Menu.rb'
