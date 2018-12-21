@@ -92,22 +92,21 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :UCZNIOWIE
-                students
+                studentsLoop
             when :PRZEDMIOTY
-                subjects
+                subjectsLoop
             when :STATYSTYKI
-                statistics
+                statisticsLoop
             when :OCENY
-                grades
+                gradesLoop
             when :UWAGI
-                notes
+                notesLoop
             when :DANE
-                importingExporting
+                importingExportingLoop
             when :EXIT
               exit
             end
         end
-        mainmenu
     end
 
     def self.students
