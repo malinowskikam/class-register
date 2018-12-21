@@ -1,7 +1,7 @@
 require "lib/errors/errors.rb"
 
 class ModelGeneretor
-    self.def generate_models db
+    def generate_models db
         raise NoTableError, 'Brak tabeli "student" w bazie danych' unless db.table_exists? :student
         class Student < Sequel::Model(db[:student])
         end
