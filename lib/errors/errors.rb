@@ -1,0 +1,2 @@
+class NoTableError < StandardError
+end
