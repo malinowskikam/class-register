@@ -14,6 +14,65 @@ class Menu
         end
     end
 
+    #_______________________________________________________
+    # FLAGI
+    @flagMenu
+    @flagStudents
+    @flagStatistics
+    @flagImportingExporting
+    @flagGrades
+    @flagNotes
+
+    def self.main
+        @flagMenu = true
+
+        while @flagMenu
+            mainmenu
+        end
+    end
+
+    def self.studentsLoop
+        @flagStudents = true
+
+        while @flagStudents
+            students
+        end
+    end
+
+    def self.statisticsLoop
+        @flagStatistics = true
+
+        while @flagStatistics
+            statistics
+        end
+    end
+
+    def self.importingExportingLoop
+        @flagImportingExporting = true
+
+        while @flagImportingExporting
+            importingExporting
+        end
+    end
+
+    def self.gradesLoop
+        @flagGrades = true
+
+        while @flagGrades
+            grades
+        end
+    end
+
+    def self.notesLoop
+        @flagNotes = true
+
+        while @flagNotes
+            notes
+        end
+    end
+
+    #________________________________________________________
+    #OBSLUGA
     def self.mainmenu
         clear
         puts "Wybierz opcję:"
@@ -77,10 +136,9 @@ class Menu
             when :WYSWIETL
                 puts "wyswietl uczniow"
             when :POWROT
-                mainmenu
+                @flagStudents =false
             end
         end
-        students
     end
 
     def self.subjects
@@ -108,10 +166,9 @@ class Menu
             when :WYSWIETL
                 puts "wyswietl przedmioty"
             when :POWROT
-                mainmenu
+                @flagSubjects=false
             end
         end
-        subjects
     end
 
     def self.statistics
@@ -133,10 +190,9 @@ class Menu
             when :UCZEN
                 puts "srednie ucznia"
             when :POWROT
-                mainmenu
+                @flagStatistics=false
             end
         end
-        statistics
     end
 
     def self.importingExporting
@@ -158,10 +214,9 @@ class Menu
             when :EKSPORT
                 puts "eksport"
             when :POWROT
-                mainmenu
+                @flagImportingExporting=false
             end
         end
-        importingExporting
     end
 
     def self.grades
@@ -189,10 +244,9 @@ class Menu
             when :WYSWIETL
                 puts "wyswietl"
             when :POWROT
-                mainmenu
+                @flagGrades=false
             end
         end
-        grades
     end
 
     def self.notes
@@ -220,11 +274,10 @@ class Menu
             when :WYSWIETL
                 puts "wyswietl"
             when :POWROT
-                mainmenu
+                @flagNotes=false
             end
         end
-        notes
     end
 end
 
-Menu.mainmenu
+Menu.main
