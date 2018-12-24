@@ -43,16 +43,16 @@ class DatabaseService
         @db.create_table :note do
             primary_key :id
             foreign_key :id_student, :student, on_delete: :cascade,  null: false
-            foreign_key :id_subject, :ssubject, on_delete: :cascade,  null: false
+            foreign_key :id_subject, :subject, on_delete: :cascade,  null: false
             Integer :note, null: false
             String :sign, fixed: true, size: 1
             Double :weight, null: false
             DateTime :date, null: false
         end
     end
-    def deploy_table_reprimand
-        raise StandardError, 'Tabela "reprimand" już istnieje' unless !@db.table_exists? :reprimand
-        @db.create_table :reprimand do
+    def deploy_table_grade
+        raise StandardError, 'Tabela "grade" już istnieje' unless !@db.table_exists? :grade
+        @db.create_table :grade do
             primary_key :id
             String :text, null: false
             DateTime :date, null: false

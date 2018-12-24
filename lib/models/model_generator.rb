@@ -10,12 +10,12 @@ class ModelGeneretor
         class Note < Sequel::Model(db[:note])
         end
 
-        raise NoTableError, 'Brak tabeli "reprimand" w bazie danych' unless db.table_exists? :reprimand
-        class Reprimand < Sequel::Model(db[:reprimand])
+        raise NoTableError, 'Brak tabeli "grade" w bazie danych' unless db.table_exists? :grade
+        class Grade < Sequel::Model(db[:grade])
         end
 
         raise NoTableError, 'Brak tabeli "subject" w bazie danych' unless db.table_exists? :subject
-        class Reprimand < Sequel::Model(db[:subject])
+        class Grade < Sequel::Model(db[:subject])
         end
     end
 end

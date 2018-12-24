@@ -33,9 +33,9 @@ describe 'Zarządzanie bazami danych' do
             expect(@db.table_exists? :note).to be true
         end
 
-        it 'tabela reprimand' do
-            @dbs.deploy_table_reprimand
-            expect(@db.table_exists? :reprimand).to be true
+        it 'tabela grade' do
+            @dbs.deploy_table_grade
+            expect(@db.table_exists? :grade).to be true
         end
 
         it 'tabela subject' do
@@ -62,12 +62,12 @@ describe 'Zarządzanie bazami danych' do
             db.deploy_table_student
             db.deploy_table_subject
             db.deploy_table_note
-            db.deploy_table_reprimand
+            db.deploy_table_grade
 
             expect{(db.deploy_table_student)}.to raise_error StandardError
             expect{(db.deploy_table_subject)}.to raise_error StandardError
             expect{(db.deploy_table_note)}.to raise_error StandardError
-            expect{(db.deploy_table_reprimand)}.to raise_error StandardError
+            expect{(db.deploy_table_grade)}.to raise_error StandardError
         end
     end
 end
