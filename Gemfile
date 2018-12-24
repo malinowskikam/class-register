@@ -12,4 +12,6 @@ group :test do
   gem 'minitest'
   gem 'rake'
   gem 'minitest-reporters'
+  gem 'sqlite3'
+  gem 'sequel'
 end
