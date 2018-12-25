@@ -82,5 +82,10 @@ class DatabaseService
         require File.join($__lib__,'models','Note')
         require File.join($__lib__,'models','Student')
         require File.join($__lib__,'models','Subject')
+
+        Student.set_dataset @db[:students]
+        Subject.set_dataset @db[:subjects]
+        Note.set_dataset @db[:notes]
+        Grade.set_dataset @db[:grades]
     end
 end
