@@ -116,7 +116,5 @@ describe 'Model "Student"' do
             expect(s.valid?).to be false
             end
         end
-
-
     end
 end
