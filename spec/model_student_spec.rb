@@ -13,10 +13,6 @@ describe 'Model "Student"' do
             @dbs = DatabaseService.new Sequel.sqlite
         end
 
-        after do
-            @dbs = nil
-        end
-
         it 'dodawanie wpisów' do
             s = Student.new
             s.firstname = 'Jan'
@@ -109,11 +105,11 @@ describe 'Model "Student"' do
         it 'niepoprawne wpisy' do
             invalid_students.each do |student|
                 s = Student.new
-            s.firstname = student[0]
-            s.lastname = student[1]
-            s.birthdate = student[2]
+                s.firstname = student[0]
+                s.lastname = student[1]
+                s.birthdate = student[2]
 
-            expect(s.valid?).to be false
+                expect(s.valid?).to be false
             end
         end
     end
