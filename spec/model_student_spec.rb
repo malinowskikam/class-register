@@ -55,7 +55,7 @@ describe 'Model "Student"' do
             s.birthdate = DateTime.new(1970,1,1)
             s.save
 
-            f = Student[1]
+            f = Student[:lastname => 'Kowalski']
             f.delete
 
             s1 = Student[:lastname => 'Kowalski']
@@ -83,5 +83,40 @@ describe 'Model "Student"' do
 
             expect(Student.all.length).to eq 3
         end
+    end
+
+    context 'walidacja' do
+        let(:invalid_students) do
+            [
+                [nil,nil,nil],
+                ['jan',nil,DateTime.new(1970,1,1)],
+                ['','',DateTime.new(1970,1,1)],
+                ['Jan','Nazwisko',nil],
+                [nil,'Nazwisko',DateTime.new(1970,1,1)],
+                ['jan','nowak',DateTime.new(1970,1,1)]
+            ]
+        end
+        
+        it 'poprawny wpis' do
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Nowak'
+            s.birthdate = DateTime.new(1970,1,1)
+            
+            expect(s.valid?).to be true
+        end
+
+        it 'niepoprawne wpisy' do
+            invalid_students.each do |student|
+                s = Student.new
+            s.firstname = student[0]
+            s.lastname = student[1]
+            s.birthdate = student[2]
+
+            expect(s.valid?).to be false
+            end
+        end
+
+
     end
 end
