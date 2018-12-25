@@ -1,5 +1,4 @@
 require File.join($__lib__,'database','database_service')
-require 'sequel'
 
 describe 'Zarządzanie bazami danych' do
     context 'obiekt managera' do 
@@ -10,10 +9,6 @@ describe 'Zarządzanie bazami danych' do
         it 'testowanie połączenia' do
             dbs = DatabaseService.new Sequel.sqlite
             expect(dbs.connected?).to be true
-
-            dbs = DatabaseService.new Sequel::Database.new
-            expect(dbs.connected?).to be false
-            
         end
     end
 
@@ -23,26 +18,20 @@ describe 'Zarządzanie bazami danych' do
             @dbs = DatabaseService.new @db
         end
 
-        it 'tabela student' do
-            @dbs.deploy_table_student
-            expect(@db.table_exists? :student).to be true
+        it 'tabela students' do
+            expect(@db.table_exists? :students).to be true
         end
 
         it 'tabela note' do
-            @dbs.deploy_table_note
-            expect(@db.table_exists? :note).to be true
+            expect(@db.table_exists? :notes).to be true
         end
 
         it 'tabela grade' do
-            @dbs.deploy_table_grade
-            expect(@db.table_exists? :grade).to be true
+            expect(@db.table_exists? :grades).to be true
         end
 
         it 'tabela subject' do
-            @dbs.deploy_table_student
-            @dbs.deploy_table_note
-            @dbs.deploy_table_subject
-            expect(@db.table_exists? :subject).to be true
+            expect(@db.table_exists? :subjects).to be true
         end
     end
 
@@ -57,17 +46,18 @@ describe 'Zarządzanie bazami danych' do
             end
         end
 
+        it 'brak połączenia' do
+            
+            expect{(DatabaseService.new Sequel::Database.new)}.to raise_error StandardError
+        end
+
         it 'zajęte nazwy tabel' do
             db = DatabaseService.new Sequel.sqlite
-            db.deploy_table_student
-            db.deploy_table_subject
-            db.deploy_table_note
-            db.deploy_table_grade
 
-            expect{(db.deploy_table_student)}.to raise_error StandardError
-            expect{(db.deploy_table_subject)}.to raise_error StandardError
-            expect{(db.deploy_table_note)}.to raise_error StandardError
-            expect{(db.deploy_table_grade)}.to raise_error StandardError
+            expect{(db.deploy_table_students)}.to raise_error StandardError
+            expect{(db.deploy_table_subjects)}.to raise_error StandardError
+            expect{(db.deploy_table_notes)}.to raise_error StandardError
+            expect{(db.deploy_table_grades)}.to raise_error StandardError
         end
     end
 end

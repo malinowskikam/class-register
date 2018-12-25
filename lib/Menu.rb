@@ -26,6 +26,8 @@ class Menu
     def self.main
         @flagMenu = true
 
+        self.prepare_database
+
         while @flagMenu
             mainmenu
         end
@@ -104,7 +106,7 @@ class Menu
             when :DANE
                 importingExportingLoop
             when :EXIT
-              exit
+                @flagMenu=false
             end
         end
     end
@@ -276,6 +278,10 @@ class Menu
                 @flagNotes=false
             end
         end
+    end
+
+    def self.prepare_database
+        
     end
 end
 
