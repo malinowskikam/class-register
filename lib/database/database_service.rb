@@ -53,7 +53,7 @@ class DatabaseService
             primary_key :id
             foreign_key :student_id, :students, on_delete: :cascade,  null: false
             foreign_key :subject_id, :subjects, on_delete: :cascade,  null: false
-            Integer :note, null: false
+            Integer :grade, null: false
             String :sign, fixed: true, size: 1
             Double :weight, null: false
             DateTime :date, null: false
