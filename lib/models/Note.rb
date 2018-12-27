@@ -1,6 +1,7 @@
 class Note < Sequel::Model
-    #id,id_student,text,date
+
     many_to_one :student
+
     plugin :validation_helpers
     def validate
         super

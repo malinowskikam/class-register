@@ -1,8 +1,8 @@
 class Grade < Sequel::Model
     #id,student_id,subject_id,grade,sign,weight,date
 
-    many_to_one :student
-    many_to_one :subject
+    many_to_one :student, allow_nil: false
+    many_to_one :subject, allow_nil: false
 
     plugin :validation_helpers
     def validate

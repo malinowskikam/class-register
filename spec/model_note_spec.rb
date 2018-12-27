@@ -113,7 +113,7 @@ describe 'Model "Note"' do
                 [nil,'Note1 sample text',DateTime.new(1970,1,1)],
                 [Student.new {|s| s.id=1},nil,DateTime.new(1970,1,1)],
                 [Student.new {|s| s.id=1},'',nil],
-                [Student.new {|s| s.id=1},'as',DateTime.new(1970,1,1)]
+                [Student.new {|s| s.id=1},'as',nil]
             ]
         end
         
@@ -132,6 +132,8 @@ describe 'Model "Note"' do
                 n.student=note[0]
                 n.text=note[1]
                 n.date=note[2]
+
+                expect(n.valid?).to be false
             end
         end
     end
