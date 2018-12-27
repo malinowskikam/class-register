@@ -70,6 +70,11 @@ describe 'Model "Subject"' do
   end
 
   context 'walidacja' do
+    before do
+      #tworzenie modeli
+      @dbs = DatabaseService.new Sequel.sqlite
+    end
+
     let(:invalid_subjects) do
       [
           nil, 'W--F', '', 'język niemiecki', 'matematyka'

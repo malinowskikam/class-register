@@ -22,15 +22,15 @@ describe 'Zarządzanie bazami danych' do
             expect(@db.table_exists? :students).to be true
         end
 
-        it 'tabela note' do
+        it 'tabela notes' do
             expect(@db.table_exists? :notes).to be true
         end
 
-        it 'tabela grade' do
+        it 'tabela grades' do
             expect(@db.table_exists? :grades).to be true
         end
 
-        it 'tabela subject' do
+        it 'tabela subjects' do
             expect(@db.table_exists? :subjects).to be true
         end
     end

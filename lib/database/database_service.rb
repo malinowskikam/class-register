@@ -36,6 +36,8 @@ class DatabaseService
             String :firstname, null: false
             String :lastname, null: false
             DateTime :birthdate, null: false
+            String :student_class, null: false
+            Integer :student_number, null: false
         end
     end
     def deploy_table_subjects
@@ -49,8 +51,8 @@ class DatabaseService
         raise StandardError, 'Tabela "grades" już istnieje' unless !@db.table_exists? :grades
         @db.create_table :grades do
             primary_key :id
-            foreign_key :id_student, :students, on_delete: :cascade,  null: false
-            foreign_key :id_subject, :subjects, on_delete: :cascade,  null: false
+            foreign_key :student_id, :students, on_delete: :cascade,  null: false
+            foreign_key :subject_id, :subjects, on_delete: :cascade,  null: false
             Integer :note, null: false
             String :sign, fixed: true, size: 1
             Double :weight, null: false
@@ -61,7 +63,7 @@ class DatabaseService
         raise StandardError, 'Tabela "notes" już istnieje' unless !@db.table_exists? :notes
         @db.create_table :notes do
             primary_key :id
-            foreign_key :id_student, :students, on_delete: :cascade,  null: false
+            foreign_key :student_id, :students, on_delete: :cascade,  null: false
             String :text, null: false
             DateTime :date, null: false
         end

@@ -18,6 +18,8 @@ describe 'Model "Student"' do
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'
             s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
             s.save
 
             f = Student[:firstname => 'Jan',:lastname => 'Kowalski']
@@ -30,6 +32,8 @@ describe 'Model "Student"' do
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'
             s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
             s.save
 
 
@@ -49,6 +53,8 @@ describe 'Model "Student"' do
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'
             s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
             s.save
 
             f = Student[:lastname => 'Kowalski']
@@ -63,18 +69,24 @@ describe 'Model "Student"' do
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'
             s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
             s.save
 
             s = Student.new
             s.firstname = 'Artur'
             s.lastname = 'Nowak'
             s.birthdate = DateTime.new(1970,10,10)
+            s.student_class = '3A'
+            s.student_number = 2
             s.save
 
             s = Student.new
             s.firstname = 'Dariusz'
             s.lastname = 'Nazwisko'
             s.birthdate = DateTime.new(1971,1,1)
+            s.student_class = '3A'
+            s.student_number = 1
             s.save
 
             expect(Student.all.length).to eq 3
@@ -82,14 +94,25 @@ describe 'Model "Student"' do
     end
 
     context 'walidacja' do
+        before do
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
+
         let(:invalid_students) do
             [
-                [nil,nil,nil],
-                ['jan',nil,DateTime.new(1970,1,1)],
-                ['','',DateTime.new(1970,1,1)],
-                ['Jan','Nazwisko',nil],
-                [nil,'Nazwisko',DateTime.new(1970,1,1)],
-                ['jan','nowak',DateTime.new(1970,1,1)]
+                [nil,'Nazwisko',DateTime.new(1970,1,1),'1',1],
+                ['','Nazwisko',DateTime.new(1970,1,1),'1',1],
+                ['jan','Nazwisko',DateTime.new(1970,1,1),'1',1],
+                ['Jan',nil,DateTime.new(1970,1,1),'1',1],
+                ['Jan','',DateTime.new(1970,1,1),'1',1],
+                ['Jan','Nazwisko',nil,'1',1],
+                ['Jan','Nazwisko',DateTime.new(1970,1,1),'',1],
+                ['Jan','Nazwisko',DateTime.new(1970,1,1),nil,1],
+                ['Jan','na12e1h821',DateTime.new(1970,1,1),'dklasdmief',1],
+                ['Jan','Nazwisko',DateTime.new(1970,1,1),'1',-11],
+                ['Jan','Nazwisko',DateTime.new(1970,1,1),'1',nil],
+                ['Jan','Nazwisko',DateTime.new(1970,1,1),'1',0],
+                ['Jan','Nazwisko',DateTime.new(1970,1,1),'1',-10]
             ]
         end
         
@@ -98,6 +121,8 @@ describe 'Model "Student"' do
             s.firstname = 'Jan'
             s.lastname = 'Nowak'
             s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
             
             expect(s.valid?).to be true
         end
@@ -108,9 +133,30 @@ describe 'Model "Student"' do
                 s.firstname = student[0]
                 s.lastname = student[1]
                 s.birthdate = student[2]
+                s.student_class=student[3]
+                s.student_number=student[4]
 
                 expect(s.valid?).to be false
             end
+        end
+
+        it 'unikalny zestaw klasa/numer w dzienniku' do
+            s1 = Student.new
+            s1.firstname = 'Jan'
+            s1.lastname = 'Nowak'
+            s1.birthdate = DateTime.new(1970,1,1)
+            s1.student_class = '3A'
+            s1.student_number = 4
+            s1.save
+
+            s2 = Student.new
+            s2.firstname = 'Andrzej'
+            s2.lastname = 'Kowalski'
+            s2.birthdate = DateTime.new(1970,1,1)
+            s2.student_class = '3A'
+            s2.student_number = 4
+
+            expect{(s2.save)}.to raise_error Sequel::ValidationFailed
         end
     end
 end
