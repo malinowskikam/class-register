@@ -46,7 +46,7 @@ class DatabaseService
         end
     end
     def deploy_table_grades
-        raise StandardError, 'Tabela "grades" już istnieje' unless !@db.table_exists? :notes
+        raise StandardError, 'Tabela "grades" już istnieje' unless !@db.table_exists? :grades
         @db.create_table :grades do
             primary_key :id
             foreign_key :id_student, :students, on_delete: :cascade,  null: false
