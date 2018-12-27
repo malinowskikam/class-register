@@ -1,4 +1,5 @@
 class Subject < Sequel::Model
+    #id,name
     plugin :validation_helpers
     def validate
         validates_presence :name

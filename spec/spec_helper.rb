@@ -18,8 +18,11 @@ SimpleCov.start do
   add_filter '/bin/'
   add_filter '/db/'
   add_filter '/.bundle/' # for .bundle folder
-  add_filter '/rspec/' # for rspec
+  add_filter '/spec/' # for rspec
   add_filter '/test/' # for minitest
+  add_filter '/.git/'
+  add_filter '/example/'
+  add_filter '/Menu.rb/'
 end
 
 $__lib__ = File.join(__dir__,'..','lib')

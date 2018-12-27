@@ -61,6 +61,7 @@ class DatabaseService
         raise StandardError, 'Tabela "notes" już istnieje' unless !@db.table_exists? :notes
         @db.create_table :notes do
             primary_key :id
+            foreign_key :id_student, :students, on_delete: :cascade,  null: false
             String :text, null: false
             DateTime :date, null: false
         end
