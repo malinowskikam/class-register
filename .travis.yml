@@ -1,4 +1,1 @@
 language: ruby
-script:
-    -bash tests_minitest.sh
-    -bash tests_rspec.sh
