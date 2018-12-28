@@ -9,6 +9,6 @@ class Grade < Sequel::Model
         validates_presence [:student_id,:subject_id,:grade,:weight,:date]
         validates_operator(:>,0,:weight)
         validates_operator(:<=,2,:weight)
-        validates_format /^[1-6][+-]?$/, :grade, allow_nil: true
+        validates_format /^[1-6][+-]?$/, :grade
     end
 end
