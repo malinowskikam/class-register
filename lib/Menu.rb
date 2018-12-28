@@ -2,6 +2,9 @@ $__lib__ = File.join(__dir__,'..','lib')
 require File.join($__lib__,'database','database_service')
 
 class Menu
+    #tworzenie bazy
+    dbs = DatabaseService.new Sequel.sqlite
+
     #czyszczenie konsoli
     def self.clear
         Gem.win_platform? ? (system "cls") : (system "clear")
@@ -88,7 +91,6 @@ class Menu
     #OBSLUGA
     def self.mainmenu
         clear
-        dbs = DatabaseService.new Sequel.sqlite
         puts "Wybierz opcję:"
         positions = [
             { "id" => :UCZNIOWIE,       "label" => "Uczniowie" },
@@ -144,20 +146,20 @@ class Menu
                 clear
                 s = Student.new
                 puts "Podaj imię:"
-                s.firstname = gets
+                s.firstname = gets.chomp
                 puts "Podaj nazwisko:"
-                s.lastname = gets
+                s.lastname = gets.chomp
                 puts "Podaj dzień z daty urodzenia:"
-                birth_day = gets.to_i
+                birth_day = gets.chomp.to_i
                 puts "Podaj miesiąc z daty urodzenia:"
-                birth_month = gets.to_i
+                birth_month = gets.chomp.to_i
                 puts "Podaj rok z daty urodzenia:"
-                birth_year = gets.to_i
+                birth_year = gets.chomp.to_i
                 s.birthdate = DateTime.new(birth_year, birth_month, birth_day)
                 puts "Podaj klasę, do której uczeń należy:"
-                s.student_class = gets
+                s.student_class = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                s.student_number = gets
+                s.student_number = gets.chomp.to_i
                 if s.valid?
                     s.save
                     puts "\nUczeń został dodany do bazy!"
@@ -173,9 +175,9 @@ class Menu
                 clear
                 str = "Imię".ljust(20) + " | " + "Nazwisko".ljust(20) + " | " + "Data urodzenia".ljust(15) + " | " + "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(15)
                 puts str
-                puts "-------------------------------------------------------------------------------------------"
+                puts "----------------------------------------------------------------------------------------------"
                 Student.each do |student|
-                    str = student.firstname[0...-1].ljust(20) + ' | ' + student.lastname[0...-1].ljust(20) + ' | ' + student.birthdate.strftime("%F").ljust(15) + ' | ' + student.student_class[0...-1].ljust(10) + ' | ' + student.student_number.to_s.ljust(15)
+                    str = student.firstname.ljust(20) + ' | ' + student.lastname.ljust(20) + ' | ' + student.birthdate.strftime("%F").ljust(15) + ' | ' + student.student_class.ljust(10) + ' | ' + student.student_number.to_s.ljust(15)
                     puts str
                 end
                 puts "\nKliknij, aby kontynuować..."
@@ -206,7 +208,7 @@ class Menu
               clear
               s = Subject.new
               puts "Podaj nazwę przedmiotu:"
-              s.name = gets
+              s.name = gets.chomp
               if s.valid?
                 s.save
                 puts "\nPrzedmiot został zapisany do bazy!"
@@ -224,7 +226,7 @@ class Menu
                 puts str
                 puts "------------------------------"
                 Subject.each do |subject|
-                    str = subject.name[0...-1].ljust(30)
+                    str = subject.name.ljust(30)
                     puts str
                 end
                 puts "\nKliknij, aby kontynuować..."
@@ -300,13 +302,32 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
-                puts "import"
+                puts "dodaj ocene"
             when :EDYTUJ
-                puts "eksport"
+                puts "edytuj ocene"
             when :USUN
                 puts "usun"
             when :WYSWIETL
-                puts "wyswietl"
+              clear
+              puts "Podaj klasę:"
+              studentclass = gets.chomp
+              puts "Podaj numer w dzienniku:"
+              studentnumber = gets.chomp.to_i
+              if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                    str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Waga".ljust(10) + " | " + "Data wystawienia".ljust(15)
+                    puts str
+                    puts "----------------------------------------------------------------------------------------------------------------------"
+                    Grade.all.each do |line|
+                        puts "brak rekordow do wyswietlenia. tu trzeba dokonczyc - potrzebne: dodawanie oceny"
+                    end
+                else
+                    puts "\nPodany student nie istnieje w bazie danych!"
+                end
+              else
+                puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+              end
+              gets
             when :POWROT
                 @flagGrades=false
             end
