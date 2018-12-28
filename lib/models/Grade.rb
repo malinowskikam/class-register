@@ -1,5 +1,5 @@
 class Grade < Sequel::Model
-    #id,student_id,subject_id,grade,sign,weight,date
+    #id,student_id,subject_id,grade,weight,date
 
     many_to_one :student, allow_nil: false
     many_to_one :subject, allow_nil: false

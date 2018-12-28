@@ -1,5 +1,5 @@
 class Student < Sequel::Model
-    #id,firstname,lastname,birthdate,class,student_number
+    #id,firstname,lastname,birthdate,student_class,student_number
     one_to_many :notes
     plugin :validation_helpers
     def validate

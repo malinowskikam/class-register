@@ -2,7 +2,7 @@ require 'sequel'
 
 class DatabaseService
     @db
-    attr_accessor :db
+    attr_reader :db
 
     def initialize db
         raise ArgumentError, '"db" nie jest obiektem bazy danych' unless database_valid? db
