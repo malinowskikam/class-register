@@ -1,5 +1,7 @@
-class Menu
+$__lib__ = File.join(__dir__,'..','lib')
+require File.join($__lib__,'database','database_service')
 
+class Menu
     #czyszczenie konsoli
     def self.clear
         Gem.win_platform? ? (system "cls") : (system "clear")
@@ -77,6 +79,7 @@ class Menu
     #OBSLUGA
     def self.mainmenu
         clear
+        dbs = DatabaseService.new Sequel.sqlite
         puts "Wybierz opcję:"
         positions = [
             { "id" => :UCZNIOWIE,       "label" => "Uczniowie" },
@@ -129,13 +132,45 @@ class Menu
 
             case positions[option-1]["id"]
             when :DODAJ
-                puts "dodawanie ucznia"
+                clear
+                s = Student.new
+                puts "Podaj imię:"
+                s.firstname = gets
+                puts "Podaj nazwisko:"
+                s.lastname = gets
+                puts "Podaj dzień z daty urodzenia:"
+                birth_day = gets.to_i
+                puts "Podaj miesiąc z daty urodzenia:"
+                birth_month = gets.to_i
+                puts "Podaj rok z daty urodzenia:"
+                birth_year = gets.to_i
+                s.birthdate = DateTime.new(birth_year, birth_month, birth_day)
+                puts "Podaj klasę, do której uczeń należy:"
+                s.student_class = gets
+                puts "Podaj numer w dzienniku:"
+                s.student_number = gets
+                if s.valid?
+                    s.save
+                    puts "\nUczeń został dodany do bazy!"
+                else
+                    puts "\nJedna z wartości była nieprawidłowa! Spróbuj ponownie."
+                end
+                gets
             when :EDYTUJ
                 puts "edycja ucznia"
             when :USUN
                 puts "usuniecie ucznia"
             when :WYSWIETL
-                puts "wyswietl uczniow"
+                clear
+                str = "Imię".ljust(20) + " | " + "Nazwisko".ljust(20) + " | " + "Data urodzenia".ljust(15) + " | " + "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(15)
+                puts str
+                puts "-------------------------------------------------------------------------------------------"
+                Student.each do |student|
+                    str = student.firstname[0...-1].ljust(20) + ' | ' + student.lastname[0...-1].ljust(20) + ' | ' + student.birthdate.strftime("%F").ljust(15) + ' | ' + student.student_class[0...-1].ljust(10) + ' | ' + student.student_number.to_s.ljust(15)
+                    puts str
+                end
+                puts "\nKliknij, aby kontynuować..."
+                gets
             when :POWROT
                 @flagStudents =false
             end

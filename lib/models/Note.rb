@@ -1,5 +1,5 @@
 class Note < Sequel::Model
-
+    #id, student_id, text, date
     many_to_one :student
 
     plugin :validation_helpers
