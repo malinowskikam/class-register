@@ -38,11 +38,11 @@ class DataService
                 f.each do |line|
                     begin
                         data = line.split(';')
-                        s.Student.new
+                        s=Student.new
                         s.id=data[0].to_i
                         s.firstname=data[1]
                         s.lastname=data[2]
-                        s.birthdate=data[3]# DOPISAĆ PARSOWANIE DATY!!!!
+                        s.birthdate=DateTime.strptime(data[3],"%Y-%d-%m %H:%M:%S")# DOPISAĆ PARSOWANIE DATY!!!!
                         s.student_class=data[4]
                         s.student_number=data[5].to_i
                         s.save
@@ -55,7 +55,7 @@ class DataService
                 i = 1
                 source.each do |data|
                     begin
-                        s.Student.new
+                        s=Student.new
                         s.id=data[0].to_i
                         s.firstname=data[1]
                         s.lastname=data[2]
@@ -79,7 +79,7 @@ class DataService
                 f.each do |line|
                     begin
                         data = line.split(';')
-                        n.Student.new
+                        n=Note.new
                         n.id=data[0].to_i
                         n.student_id=data[1].to_i
                         n.text=data[2]
@@ -94,7 +94,7 @@ class DataService
                 i = 1
                 source.each do |data|
                     begin
-                        n.Student.new
+                        n=Note.new
                         n.id=data[0].to_i
                         n.student_id=data[1].to_i
                         n.text=data[2]
@@ -116,7 +116,7 @@ class DataService
                 f.each do |line|
                     begin
                         data = line.split(';')
-                        g.Grade.new
+                        g=Grade.new
                         g.id=data[0].to_i
                         g.student_id=data[1].to_i
                         g.subject_id=data[2].to_i
@@ -133,7 +133,7 @@ class DataService
                 i = 1
                 source.each do |data|
                     begin
-                        g.Grade.new
+                        g=Grade.new
                         g.id=data[0].to_i
                         g.student_id=data[1].to_i
                         g.subject_id=data[2].to_i
