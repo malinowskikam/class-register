@@ -436,37 +436,26 @@ class Menu
                 studentnumber = gets.chomp.to_i
                 if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
                     if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        g.student = Student.select.where(student_class: studentclass, student_number: studentnumber).first
                         puts "Podaj nazwę przedmiotu:"
                         subjectname = gets.chomp
                         if Subject.where(name: subjectname).count == 1
+                            g.subject = Subject.select.where(name: subjectname).first
                             puts "Podaj ocenę:"
-                            grade = gets.chomp
-                            if grade.match(/^[1-6][+-]?$/)
-                                puts "Podaj wagę:"
-                                weight = gets.chomp.to_f
-                                if weight>0 and weight<=2
-                                    puts "Podaj dzień:"
-                                    day = gets.chomp
-                                    puts "Podaj miesiąc:"
-                                    month = gets.chomp
-                                    puts "Podaj rok:"
-                                    year = gets.chomp
-                                    if day.match(/^[1-2]$/) and month.match(/^[1-9][0-2]?$/) and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
-                                        g.student = Student.select.where(student_class: studentclass, student_number: studentnumber).first
-                                        g.subject = Subject.select.where(name: subjectname).first
-                                        g.grade = grade
-                                        g.weight = weight
-                                        g.date = DateTime.new(year.to_i, month.to_i, day.to_i)
-                                        g.save
-                                        puts "\nPodana ocena została zapisana!"
-                                    else
-                                        puts "\nPodana data jest nieprawidłowa! Spróbuj ponownie."
-                                    end
-                                else
-                                    puts "\nPodana waga jest nieprawidłowa! Spróbuj ponownie."
-                                end
+                            g.grade = gets.chomp
+                            puts "Podaj wagę:"
+                            g.weight = gets.chomp.to_f
+                            puts "Podaj dzień:"
+                            day = gets.chomp
+                            puts "Podaj miesiąc:"
+                            month = gets.chomp
+                            puts "Podaj rok:"
+                            year = gets.chomp
+                            g.date = DateTime.new(year.to_i, month.to_i, day.to_i)
+                            if g.valid?
+                                g.save
+                                puts "\nPodana ocena została zapisana!"
                             else
-                                puts "\nPodana waga jest nieprawidłowa! Spróbuj ponownie."
                             end
                         else
                             puts "\nPodany przedmiot nie istnieje w bazie! Spróbuj ponownie."
