@@ -144,20 +144,20 @@ class Menu
                 clear
                 s = Student.new
                 puts "Podaj imię:"
-                s.firstname = gets
+                s.firstname = gets.chomp
                 puts "Podaj nazwisko:"
-                s.lastname = gets
+                s.lastname = gets.chomp
                 puts "Podaj dzień z daty urodzenia:"
-                birth_day = gets.to_i
+                birth_day = gets.chomp.to_i
                 puts "Podaj miesiąc z daty urodzenia:"
-                birth_month = gets.to_i
+                birth_month = gets.chomp.to_i
                 puts "Podaj rok z daty urodzenia:"
-                birth_year = gets.to_i
+                birth_year = gets.chomp.to_i
                 s.birthdate = DateTime.new(birth_year, birth_month, birth_day)
                 puts "Podaj klasę, do której uczeń należy:"
-                s.student_class = gets
+                s.student_class = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                s.student_number = gets
+                s.student_number = gets.chomp.to_i
                 if s.valid?
                     s.save
                     puts "\nUczeń został dodany do bazy!"
@@ -175,7 +175,7 @@ class Menu
                 puts str
                 puts "-------------------------------------------------------------------------------------------"
                 Student.each do |student|
-                    str = student.firstname[0...-1].ljust(20) + ' | ' + student.lastname[0...-1].ljust(20) + ' | ' + student.birthdate.strftime("%F").ljust(15) + ' | ' + student.student_class[0...-1].ljust(10) + ' | ' + student.student_number.to_s.ljust(15)
+                    str = student.firstname.ljust(20) + ' | ' + student.lastname.ljust(20) + ' | ' + student.birthdate.strftime("%F").ljust(15) + ' | ' + student.student_class.ljust(10) + ' | ' + student.student_number.to_s.ljust(15)
                     puts str
                 end
                 puts "\nKliknij, aby kontynuować..."
@@ -206,7 +206,7 @@ class Menu
               clear
               s = Subject.new
               puts "Podaj nazwę przedmiotu:"
-              s.name = gets
+              s.name = gets.chomp
               if s.valid?
                 s.save
                 puts "\nPrzedmiot został zapisany do bazy!"
@@ -224,7 +224,7 @@ class Menu
                 puts str
                 puts "------------------------------"
                 Subject.each do |subject|
-                    str = subject.name[0...-1].ljust(30)
+                    str = subject.name.ljust(30)
                     puts str
                 end
                 puts "\nKliknij, aby kontynuować..."
@@ -306,7 +306,7 @@ class Menu
             when :USUN
                 puts "usun"
             when :WYSWIETL
-                puts "wyswietl"
+                
             when :POWROT
                 @flagGrades=false
             end
