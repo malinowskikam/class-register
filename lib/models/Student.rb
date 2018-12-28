@@ -1,6 +1,8 @@
 class Student < Sequel::Model
     #id,firstname,lastname,birthdate,student_class,student_number
+
     one_to_many :notes
+
     plugin :validation_helpers
     def validate
         super
@@ -12,5 +14,4 @@ class Student < Sequel::Model
         validates_format /^[A-Z][A-Za-ząęółćżźśĄĘÓŚŻŹĆŁ '-]+$/, [:firstname,:lastname]
         validates_unique [:student_class,:student_number]
     end
-    
 end

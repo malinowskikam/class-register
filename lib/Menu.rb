@@ -168,7 +168,86 @@ class Menu
                 end
                 gets
             when :EDYTUJ
-                puts "edycja ucznia"
+                clear
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        puts "Podaj wartość, którą chcesz edytować:"
+                        positions = [
+                            {"id" => :IMIE, "label" => "Imię"},
+                            {"id" => :NAZWISKO, "label" => "Nazwisko"},
+                            {"id" => :DATAURODZENIA, "label" => "Data urodzenia"},
+                            {"id" => :KLASA, "label" => "Klasa"},
+                            {"id" => :NUMER, "label" => "Numer w dzienniku"}
+                        ]
+                        render_positions positions
+                        puts "\nWybór:"
+                        option = gets.chomp.to_i
+                        if option>0 and option<=positions.length
+                            case positions[option-1]["id"]
+                            when :IMIE
+                                puts "Podaj nowe imię:"
+                                newname = gets.chomp
+                                if newname.match(/^[A-Z][A-Za-ząęółćżźśĄĘÓŚŻŹĆŁ '-]+$/)
+                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:firstname => newname)
+                                    puts "\nNowe imię zostało zapisane!"
+                                else
+                                    puts "\nPodano nieprawidłowe imię! Spróbuj jeszcze raz."
+                                end
+                            when :NAZWISKO
+                                puts "Podaj nowe nazwisko:"
+                                newsurname = gets.chomp
+                                if newsurname.match(/^[A-Z][A-Za-ząęółćżźśĄĘÓŚŻŹĆŁ '-]+$/)
+                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:lastname => newsurname)
+                                    puts "\nNowe nazwisko zostało zapisane!"
+                                else
+                                    puts "\nPodano nieprawidłowe nazwisko! Spróbuj jeszcze raz."
+                                end
+                            when :DATAURODZENIA
+                                puts "Podaj dzień z daty urodzenia:"
+                                newday = gets.chomp
+                                puts "Podaj miesiąc z daty urodzenia:"
+                                newmonth = gets.chomp
+                                puts "Podaj rok z daty urodzenia:"
+                                newyear = gets.chomp
+                                if newday.match(/^[1-2]$/) and newmonth.match(/^[1-9][0-2]?$/) and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
+                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:birthdate => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
+                                    puts "\nNowa data urodzenia została zapisana!"
+                                else
+                                    puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
+                                end
+                            when :KLASA
+                                puts "Podaj nową klasę ucznia:"
+                                newclass = gets.chomp
+                                if newclass.match(/^[1-8][A-Z]?$/)
+                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:student_class => newclass)
+                                    puts "\nNowa klasa została zapisana!"
+                                else
+                                    puts "\nPodano nieprawidłową klasę! Spróbuj jeszcze raz."
+                                end
+                            when :NUMER
+                                puts "Podaj nowy numer w dzienniku ucznia:"
+                                newnumber = gets.chomp.to_i
+                                if newnumber > 0
+                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:student_number => newnumber)
+                                    puts "\nNowy numer w dzienniku został zapisany!"
+                                else
+                                    puts "\nPodano nieprawidłowy numer! Spróbuj jeszcze raz."
+                                end
+                            else
+                                puts "\nPodano nieprawidłową wartość! Spróbuj ponownie."
+                            end
+                        end
+                    else
+                        puts "\nPodany student nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :USUN
                 puts "usuniecie ucznia"
             when :WYSWIETL
