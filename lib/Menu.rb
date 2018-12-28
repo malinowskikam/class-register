@@ -2,6 +2,9 @@ $__lib__ = File.join(__dir__,'..','lib')
 require File.join($__lib__,'database','database_service')
 
 class Menu
+    #tworzenie bazy
+    dbs = DatabaseService.new Sequel.sqlite
+
     #czyszczenie konsoli
     def self.clear
         Gem.win_platform? ? (system "cls") : (system "clear")
@@ -88,7 +91,6 @@ class Menu
     #OBSLUGA
     def self.mainmenu
         clear
-        dbs = DatabaseService.new Sequel.sqlite
         puts "Wybierz opcję:"
         positions = [
             { "id" => :UCZNIOWIE,       "label" => "Uczniowie" },
@@ -173,7 +175,7 @@ class Menu
                 clear
                 str = "Imię".ljust(20) + " | " + "Nazwisko".ljust(20) + " | " + "Data urodzenia".ljust(15) + " | " + "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(15)
                 puts str
-                puts "-------------------------------------------------------------------------------------------"
+                puts "----------------------------------------------------------------------------------------------"
                 Student.each do |student|
                     str = student.firstname.ljust(20) + ' | ' + student.lastname.ljust(20) + ' | ' + student.birthdate.strftime("%F").ljust(15) + ' | ' + student.student_class.ljust(10) + ' | ' + student.student_number.to_s.ljust(15)
                     puts str
@@ -300,13 +302,32 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
-                puts "import"
+                puts "dodaj ocene"
             when :EDYTUJ
-                puts "eksport"
+                puts "edytuj ocene"
             when :USUN
                 puts "usun"
             when :WYSWIETL
-                
+              clear
+              puts "Podaj klasę:"
+              studentclass = gets.chomp
+              puts "Podaj numer w dzienniku:"
+              studentnumber = gets.chomp.to_i
+              if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                    str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Waga".ljust(10) + " | " + "Data wystawienia".ljust(15)
+                    puts str
+                    puts "----------------------------------------------------------------------------------------------------------------------"
+                    Grade.all.each do |line|
+                        puts "brak rekordow do wyswietlenia. tu trzeba dokonczyc - potrzebne: dodawanie oceny"
+                    end
+                else
+                    puts "\nPodany student nie istnieje w bazie danych!"
+                end
+              else
+                puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+              end
+              gets
             when :POWROT
                 @flagGrades=false
             end
