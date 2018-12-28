@@ -311,9 +311,41 @@ class Menu
               end
               gets
             when :EDYTUJ
-                puts "edycja przedmiotu"
+                clear
+                puts "Podaj nazwę:"
+                name = gets.chomp
+                if name.match(/[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/)
+                    if Subject.where(name: name).count == 1
+                        puts "Podaj nową nazwę:"
+                        newname = gets.chomp
+                        if newname.match(/[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/)
+                            Subject.where(name: name).update(:name => newname)
+                            puts "\nPodany przedmiot został zapisany!"
+                        else
+                            puts "\nPodano nieprawidłową nazwę! Spróbuj jeszcze raz."
+                        end
+                    else
+                        puts "\nPodany przedmiot nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :USUN
-                puts "usuniecie przedmiotu"
+                clear
+                puts "Podaj nazwę:"
+                name = gets.chomp
+                if name.match(/[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/)
+                    if Subject.where(name: name).count == 1
+                        Subject.where(name: name).delete
+                        puts "\nPodany przedmiot został usunięty!"
+                    else
+                        puts "\nPodany przedmiot nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :WYSWIETL
                 clear
                 str = "Nazwa".ljust(30)
