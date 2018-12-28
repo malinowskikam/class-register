@@ -20,6 +20,7 @@ class Menu
     # FLAGI
     @flagMenu
     @flagStudents
+    @flagSubjects
     @flagStatistics
     @flagImportingExporting
     @flagGrades
@@ -40,6 +41,14 @@ class Menu
 
         while @flagStudents
             students
+        end
+    end
+
+    def self.subjectsLoop
+        @flagSubjects = true
+
+        while @flagSubjects
+            subjects
         end
     end
 
@@ -194,13 +203,32 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
-                puts "dodawanie przedmiotu"
+              clear
+              s = Subject.new
+              puts "Podaj nazwę przedmiotu:"
+              s.name = gets
+              if s.valid?
+                s.save
+                puts "\nPrzedmiot został zapisany do bazy!"
+              else
+                puts "\nPodana nazwa jest nieprawidłowa! Spróbuj ponownie."
+              end
+              gets
             when :EDYTUJ
                 puts "edycja przedmiotu"
             when :USUN
                 puts "usuniecie przedmiotu"
             when :WYSWIETL
-                puts "wyswietl przedmioty"
+                clear
+                str = "Nazwa".ljust(30)
+                puts str
+                puts "------------------------------"
+                Subject.each do |subject|
+                    str = subject.name[0...-1].ljust(30)
+                    puts str
+                end
+                puts "\nKliknij, aby kontynuować..."
+                gets
             when :POWROT
                 @flagSubjects=false
             end

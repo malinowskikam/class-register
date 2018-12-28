@@ -1,6 +1,7 @@
 class Subject < Sequel::Model
     #id,name
     one_to_many :grades
+
     plugin :validation_helpers
     def validate
         validates_presence :name
