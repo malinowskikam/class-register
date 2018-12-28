@@ -249,7 +249,22 @@ class Menu
                 end
                 gets
             when :USUN
-                puts "usuniecie ucznia"
+                clear
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        Student.where(student_class: studentclass, student_number: studentnumber).delete
+                        puts "\nPodany student został usunięty z bazy!"
+                    else
+                        puts "\nPodany student nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :WYSWIETL
                 clear
                 str = "Imię".ljust(20) + " | " + "Nazwisko".ljust(20) + " | " + "Data urodzenia".ljust(15) + " | " + "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(15)
