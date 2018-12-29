@@ -155,12 +155,13 @@ class Menu
                 birth_month = gets.chomp.to_i
                 puts "Podaj rok z daty urodzenia:"
                 birth_year = gets.chomp.to_i
-                s.birthdate = DateTime.new(birth_year, birth_month, birth_day)
                 puts "Podaj klasę, do której uczeń należy:"
                 s.student_class = gets.chomp
                 puts "Podaj numer w dzienniku:"
                 s.student_number = gets.chomp.to_i
-                if s.valid?
+                s.birthdate = DateTime.new
+                if s.valid? and birth_day>0 and birth_month>0 and birth_year>0
+                    s.birthdate = DateTime.new(birth_year, birth_month, birth_day)
                     s.save
                     puts "\nUczeń został dodany do bazy!"
                 else
@@ -214,7 +215,8 @@ class Menu
                                 puts "Podaj rok z daty urodzenia:"
                                 newyear = gets.chomp
                                 if newday.match(/^[1-2]$/) and newmonth.match(/^[1-9][0-2]?$/) and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
-                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:birthdate => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
+                                    newdate = DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i)
+                                    Student.where(student_class: studentclass, student_number: studentnumber).update(:birthdate => newdate)
                                     puts "\nNowa data urodzenia została zapisana!"
                                 else
                                     puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
@@ -451,8 +453,9 @@ class Menu
                             month = gets.chomp
                             puts "Podaj rok:"
                             year = gets.chomp
-                            g.date = DateTime.new(year.to_i, month.to_i, day.to_i)
-                            if g.valid?
+                            g.date = DateTime.new
+                            if g.valid? and day.to_i>0 and month.to_i>0 and year.to_i>0
+                                g.date = DateTime.new(year.to_i, month.to_i, day.to_i)
                                 g.save
                                 puts "\nPodana ocena została zapisana!"
                             else
@@ -468,29 +471,95 @@ class Menu
                 end
                 gets
             when :EDYTUJ
-                puts "edytuj ocene"
-            when :USUN
-                puts "usun"
-            when :WYSWIETL
-              clear
-              puts "Podaj klasę:"
-              studentclass = gets.chomp
-              puts "Podaj numer w dzienniku:"
-              studentnumber = gets.chomp.to_i
-              if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                    str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Waga".ljust(10) + " | " + "Data wystawienia".ljust(15)
-                    puts str
-                    puts "----------------------------------------------------------------------------------------------------------------------"
-                    Grade.all.each do |line|
-                        puts "brak rekordow do wyswietlenia. tu trzeba dokonczyc - potrzebne: dodawanie oceny"
+                clear
+                g = Grade.new
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        puts "Podaj wartość, którą chcesz edytować:"
+                        positions = [
+                            {"id" => :OCENA, "label" => "Ocena"},
+                            {"id" => :WAGA, "label" => "Waga"},
+                            {"id" => :DATA, "label" => "Data"}
+                        ]
+                        render_positions positions
+                        puts "\nWybór:"
+                        option = gets.chomp.to_i
+                        if option>0 and option<=positions.length
+                            case positions[option-1]["id"]
+                            when :OCENA
+                                puts "Podaj nową ocenę:"
+                                newgrade = gets.chomp
+                                if newgrade.match(/^[1-6][+-]?$/)
+                                    Grade.where(student_class: studentclass, student_number: studentnumber).update(:grade => newgrade)
+                                    puts "\nNowa ocena została zapisana!"
+                                else
+                                    puts "\nPodano nieprawidłową ocenę! Spróbuj jeszcze raz."
+                                end
+                            when :WAGA
+                                puts "Podaj nową wagę:"
+                                newweight = gets.chomp.to_f
+                                if newweight > 0 and newweight <= 2
+                                    Grade.where(student_class: studentclass, student_number: studentnumber).update(:weight=> newweight)
+                                    puts "\nNowa waga została zapisana!"
+                                else
+                                    puts "\nPodano nieprawidłową wagę! Spróbuj jeszcze raz."
+                                end
+                            when :DATA
+                                puts "Podaj dzień:"
+                                newday = gets.chomp
+                                puts "Podaj miesiąc:"
+                                newmonth = gets.chomp
+                                puts "Podaj rok:"
+                                newyear = gets.chomp
+                                if newday.match(/^[1-2]$/) and newmonth.match(/^[1-9][0-2]?$/) and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
+                                    Grade.where(student_class: studentclass, student_number: studentnumber).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
+                                    puts "\nNowa data została zapisana!"
+                                else
+                                    puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
+                                end
+                            else
+                                puts "\nPodano nieprawidłową wartość! Spróbuj ponownie."
+                            end
+                        else
+                            puts "\nPodana ocena nie istnieje w bazie danych!"
+                        end
+                    else
+                        puts "\nPodany student nie istnieje w bazie danych!"
                     end
                 else
-                    puts "\nPodany student nie istnieje w bazie danych!"
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
                 end
-              else
-                puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
-              end
+                gets
+            when :USUN
+                clear
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Grade.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        Grade.where(student_class: studentclass, student_number: studentnumber).delete
+                        puts "\nPodana ocena została usunięta z bazy!"
+                    else
+                        puts "\nPodana ocena nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
+            when :WYSWIETL
+              clear
+                str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Waga".ljust(10) + " | " + "Data wystawienia".ljust(15)
+                puts str
+                puts "----------------------------------------------------------------------------------------------------------------------"
+                Grade.all.each do |line|
+                    puts "brak rekordow do wyswietlenia. tu trzeba dokonczyc - potrzebne: dodawanie oceny"
+                end
+              puts "\nKliknij, aby kontynuować..."
               gets
             when :POWROT
                 @flagGrades=false
