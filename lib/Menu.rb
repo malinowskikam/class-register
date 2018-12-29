@@ -160,7 +160,7 @@ class Menu
                 puts "Podaj numer w dzienniku:"
                 s.student_number = gets.chomp.to_i
                 s.birthdate = DateTime.new
-                if s.valid? and birth_day>0 and birth_month>0 and birth_year>0
+                if s.valid? and birth_day>0 and birth_day<32 and birth_month>0 and birth_month<13 and birth_year>0 and birth_year <9999
                     s.birthdate = DateTime.new(birth_year, birth_month, birth_day)
                     s.save
                     puts "\nUczeń został dodany do bazy!"
@@ -214,7 +214,7 @@ class Menu
                                 newmonth = gets.chomp
                                 puts "Podaj rok z daty urodzenia:"
                                 newyear = gets.chomp
-                                if newday.match(/^[1-2]$/) and newmonth.match(/^[1-9][0-2]?$/) and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
+                                if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
                                     newdate = DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i)
                                     Student.where(student_class: studentclass, student_number: studentnumber).update(:birthdate => newdate)
                                     puts "\nNowa data urodzenia została zapisana!"
@@ -454,7 +454,7 @@ class Menu
                             puts "Podaj rok:"
                             year = gets.chomp
                             g.date = DateTime.new
-                            if g.valid? and day.to_i>0 and month.to_i>0 and year.to_i>0
+                            if g.valid? and day.to_i>0 and day.to_i<32 and month.to_i>0 and month.to_i<13 and year.to_i>0 and year.to_i<9999
                                 g.date = DateTime.new(year.to_i, month.to_i, day.to_i)
                                 g.save
                                 puts "\nPodana ocena została zapisana!"
@@ -515,7 +515,7 @@ class Menu
                                 newmonth = gets.chomp
                                 puts "Podaj rok:"
                                 newyear = gets.chomp
-                                if newday.match(/^[1-2]$/) and newmonth.match(/^[1-9][0-2]?$/) and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
+                                if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/)
                                     Grade.where(student_class: studentclass, student_number: studentnumber).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
                                     puts "\nNowa data została zapisana!"
                                 else
