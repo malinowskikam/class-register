@@ -473,7 +473,6 @@ class Menu
                 gets
             when :EDYTUJ
                 clear
-                g = Grade.new
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
@@ -597,7 +596,6 @@ class Menu
                 gets
             when :USUN
                 clear
-                g = Grade.new
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
@@ -692,13 +690,163 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
-                puts "dodaj"
+                clear
+                n = Note.new
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        n.student = Student.select.where(student_class: studentclass, student_number: studentnumber).first
+                        puts "Podaj dzień:"
+                        day = gets.chomp
+                        puts "Podaj miesiąc:"
+                        month = gets.chomp
+                        puts "Podaj rok:"
+                        year = gets.chomp
+                        n.date = DateTime.new
+                        n.text = "test" #do przechodzenia walidacji
+                        if n.valid? and day.to_i>0 and day.to_i<32 and month.to_i>0 and month.to_i<13 and year.to_i>0 and year.to_i<10000
+                            n.date = DateTime.new(year.to_i, month.to_i, day.to_i)
+                            puts "Podaj treść uwagi:"
+                            sometext = gets
+                            n.text = sometext[0...-1] #dodanie do bazy bez \n na końcu
+                            if n.valid?
+                                n.save
+                                puts "\nPodana uwaga została zapisana!"
+                            else
+                                puts "\nWpisana uwaga jest za krótka! Spróbuj ponownie."
+                            end
+                        else
+                            puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
+                        end
+                    else
+                        puts "\nPodany student nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :EDYTUJ
-                puts "edytuj"
+                clear
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        puts "Podaj dzień:"
+                        day = gets.chomp
+                        puts "Podaj miesiąc:"
+                        month = gets.chomp
+                        puts "Podaj rok:"
+                        year = gets.chomp
+                        if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
+                            puts "Podaj wartość, którą chcesz edytować:"
+                            positions = [
+                                {"id" => :TRESC, "label" => "Treść"},
+                                {"id" => :DATA, "label" => "Data"}
+                            ]
+                            render_positions positions
+                            puts "\nWybór:"
+                            option = gets.chomp.to_i
+                            if option>0 and option<=positions.length
+                                case positions[option-1]["id"]
+                                when :TRESC
+                                    puts "Podaj nową treść uwagi:"
+                                    newnote = gets
+                                    newnote = newnote[0...-1]
+                                    if newnote.length>3
+                                        if Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                      date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
+                                            Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                       date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:text => newnote)
+                                            puts "\nNowa treść została zapisana!"
+                                        else
+                                            puts "\nPodana uwaga nie istnieje w bazie danych!"
+                                        end
+                                    else
+                                        puts "\nPodana uwaga jest za krótka! Spróbuj ponownie."
+                                    end
+                                when :DATA
+                                    puts "Podaj dzień:"
+                                    newday = gets.chomp
+                                    puts "Podaj miesiąc:"
+                                    newmonth = gets.chomp
+                                    puts "Podaj rok:"
+                                    newyear = gets.chomp
+                                    if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and newyear.to_i<10000
+                                        if Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                      date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
+                                            Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                       date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
+                                            puts "\nNowa data została zapisana!"
+                                        else
+                                            puts "\nPodana uwaga nie istnieje w bazie danych!"
+                                        end
+                                    else
+                                        puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
+                                    end
+                                end
+                            end
+                        else
+                            puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
+                        end
+                    else
+                        puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :USUN
-                puts "usun"
+                clear
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp.to_i
+                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                        puts "Podaj dzień:"
+                        day = gets.chomp
+                        puts "Podaj miesiąc:"
+                        month = gets.chomp
+                        puts "Podaj rok:"
+                        year = gets.chomp
+                        if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
+                            if Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                          date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
+                                Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                           date: DateTime.new(year.to_i, month.to_i, day.to_i)).delete
+                                puts "\nNowa data została usunięta!"
+                            else
+                                puts "\nPodana uwaga nie istnieje w bazie danych!"
+                            end
+                        else
+                            puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
+                        end
+                    else
+                        puts "\nPodany student nie istnieje w bazie danych!"
+                    end
+                else
+                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                end
+                gets
             when :WYSWIETL
-                puts "wyswietl"
+                clear
+                str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Data wystawienia".ljust(17) + " | " + "Treść".ljust(60)
+                puts str
+                puts "---------------------------------------------------------------------------------------------------------------"
+                Note.all.each do |note|
+                    str = note.student.student_class.ljust(10) +
+                        " | " + note.student.student_number.to_s.ljust(20) +
+                        " | " + note.date.strftime("%F").ljust(17) +
+                        " | " + note.text.ljust(60)
+                    puts str
+                end
+                puts "\nKliknij, aby kontynuować..."
+                gets
             when :POWROT
                 @flagNotes=false
             end
@@ -706,7 +854,7 @@ class Menu
     end
 
     def self.prepare_database
-        
+        #nie usuwać!
     end
 end
 
