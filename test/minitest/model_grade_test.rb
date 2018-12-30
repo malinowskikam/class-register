@@ -1,7 +1,7 @@
 require File.join($__lib__,'database','database_service')
 describe 'Model "Grade"' do
-    context 'obiekt modelu' do
-        it 'tworzenie' do
+    describe 'obiekt modelu' do
+        def 'tworzenie'
             dbs = DatabaseService.new Sequel.sqlite
             g = Grade.new
             @g.must_be_instance_of(Grade)
@@ -9,12 +9,12 @@ describe 'Model "Grade"' do
     end
 
 
-    context 'akcje CRUD' do
+    describe 'akcje CRUD' do
       before do
         @dbs = DatabaseService.new Sequel.sqlite
       end
 
-      it 'dodawanie wpisów' do
+      def 'dodawanie wpisów'
         st = Student.new
         st.firstname = 'Jan'
         st.lastname = 'Kowalski'
@@ -38,7 +38,7 @@ describe 'Model "Grade"' do
         assert_equal 1, (Grade.select.all.count)
       end
 
-      it 'modyfikowanie wpisów' do
+      def 'modyfikowanie wpisów'
         st = Student.new
         st.firstname = 'Jan'
         st.lastname = 'Kowalski'
@@ -66,7 +66,7 @@ describe 'Model "Grade"' do
         assert_equal ['5+'], ([Grade[g.id].grade])
       end
 
-      it 'usuwanie wpisów' do
+      def 'usuwanie wpisów' 
         st = Student.new
         st.firstname = 'Jan'
         st.lastname = 'Kowalski'
@@ -92,7 +92,7 @@ describe 'Model "Grade"' do
         assert_equal 0, (Note.select.all.count)
       end
 
-      it 'czytanie wpisów' do
+      def 'czytanie wpisów' 
         st1 = Student.new
         st1.firstname = 'Jan'
         st1.lastname = 'Kowalski'
@@ -125,7 +125,7 @@ describe 'Model "Grade"' do
       end
     end
 
-  context 'walidacja' do
+  describe 'walidacja' do
     before do
       @dbs = DatabaseService.new Sequel.sqlite
     end
@@ -144,7 +144,7 @@ describe 'Model "Grade"' do
       ]
     end
 
-    it 'poprawny wpis' do
+    def 'poprawny wpis' 
       st = Student.new
       st.firstname = 'Jan'
       st.lastname = 'Kowalski'
@@ -168,7 +168,7 @@ describe 'Model "Grade"' do
       assert_equal true, (g.valid?)
     end
 
-    it 'niepoprawne wpisy' do
+    def 'niepoprawne wpisy' 
       invalid_grades.each do |grade|
         g = Grade.new
         g.student = grade[0]
@@ -181,12 +181,12 @@ describe 'Model "Grade"' do
     end
   end
 
-  context 'asocjacja grade-student' do
+  describe 'asocjacja grade-student' do
     before do
       @dbs = DatabaseService.new Sequel.sqlite
     end
 
-    it 'dostęp do obiektu student' do
+    def 'dostęp do obiektu student' 
       s = Student.new
       s.firstname = 'Jan'
       s.lastname = 'Kowalski'
@@ -218,12 +218,12 @@ describe 'Model "Grade"' do
     end
   end
 
-  context 'asocjacja grade-subject' do
+  describe 'asocjacja grade-subject' do
     before do
       @dbs = DatabaseService.new Sequel.sqlite
     end
 
-    it 'dostęp do obiektu subject' do
+    def 'dostęp do obiektu subject'
       s = Student.new
       s.firstname = 'Jan'
       s.lastname = 'Kowalski'
