@@ -31,7 +31,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st
         g.subject = su
-        g.weight = 1
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -55,7 +54,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st
         g.subject = su
-        g.weight = 1.0
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -83,7 +81,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st
         g.subject = su
-        g.weight = 1.0
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -109,7 +106,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st1
         g.subject = su
-        g.weight = 1.0
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -117,7 +113,6 @@ describe 'Model "Grade"' do
         g.grade = '2'
         g.student = st1
         g.subject = su
-        g.weight = 1.1
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -161,7 +156,6 @@ describe 'Model "Grade"' do
       g.grade = '4-'
       g.student = st
       g.subject = su
-      g.weight = 1.0
       g.date = DateTime.new(1970,1,1)
       g.save
 
@@ -174,8 +168,7 @@ describe 'Model "Grade"' do
         g.student = grade[0]
         g.subject = grade[1]
         g.grade = grade[2]
-        g.weight = grade[3]
-        g.date = grade[4]
+        g.date = grade[3]
         expect(g.valid?).to be false
       end
     end
@@ -203,7 +196,6 @@ describe 'Model "Grade"' do
       g.grade = '4-'
       g.student = s
       g.subject = su
-      g.weight = 1.0
       g.date = DateTime.new(1970,1,1)
       g.save
 
@@ -240,7 +232,6 @@ describe 'Model "Grade"' do
       g.grade = '4-'
       g.student = s
       g.subject = su
-      g.weight = 1.0
       g.date = DateTime.new(1970,1,1)
       g.save
 

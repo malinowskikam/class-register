@@ -108,7 +108,7 @@ class DataService
             else
                 raise StandardError, "nieobsługiwane źródło"
             end
-        when :grades #id,student_id,subject_id,grade,weight,date
+        when :grades #id,student_id,subject_id,grade,date
             if source.is_a? String
                 raise StandardError, 'nie znaleziono pkiku' unless File.file? source
                 f = File.open source,'r'
@@ -121,8 +121,7 @@ class DataService
                         g.student_id=data[1].to_i
                         g.subject_id=data[2].to_i
                         g.grade=data[3]
-                        g.weight=data[4].to_f
-                        g.date=data[5]# DOPISAĆ PARSOWANIE DATY!!!!
+                        g.date=data[4]# DOPISAĆ PARSOWANIE DATY!!!!
                         g.save
                     rescue
                         p "wystąpił błąd w linii: " + i.to_s
@@ -138,8 +137,7 @@ class DataService
                         g.student_id=data[1].to_i
                         g.subject_id=data[2].to_i
                         g.grade=data[3]
-                        g.weight=data[4].to_f
-                        g.date=data[5]# DOPISAĆ PARSOWANIE DATY!!!!
+                        g.date=data[4]# DOPISAĆ PARSOWANIE DATY!!!!
                         g.save
                     rescue
                         p "wystąpił błąd w linii: " + i.to_s

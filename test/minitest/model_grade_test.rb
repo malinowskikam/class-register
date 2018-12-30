@@ -31,7 +31,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st
         g.subject = su
-        g.weight = 1
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -55,7 +54,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st
         g.subject = su
-        g.weight = 1.0
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -83,7 +81,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st
         g.subject = su
-        g.weight = 1.0
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -109,7 +106,6 @@ describe 'Model "Grade"' do
         g.grade = '4-'
         g.student = st1
         g.subject = su
-        g.weight = 1.0
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -117,7 +113,6 @@ describe 'Model "Grade"' do
         g.grade = '2'
         g.student = st1
         g.subject = su
-        g.weight = 1.1
         g.date = DateTime.new(1970,1,1)
         g.save
 
@@ -132,15 +127,15 @@ describe 'Model "Grade"' do
 
     let(:invalid_grades) do
       [
-          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, '3', 3, "1-1-1970"],
-          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 3, 3, 333],
-          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 5542, 1, DateTime.new(1970,1,1)],
-          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 5542, 6, [1,2,3]],
-          [Student.new {|s| s.id=1}, Student.new {|s| s.id=1}, '3', 4, DateTime.new(1970,1,1)],
-          [Student.new {|s| s.id=1}, nil, '3', 2, "1-1-1970"],
-          [Student.new {|s| s.id=1}, nil, '3+', 2, DateTime.new(1970,1,1)],
-          [Student.new {|s| s.id=1}, nil, 5542, 3333, DateTime.new(1970,1,1)],
-          [nil, nil, '3+', 2, DateTime.new(1970,1,1)]
+          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, '3', "1-1-1970"],
+          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 3, 333],
+          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 5542, DateTime.new(1970,1,1)],
+          [Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 5542, [1,2,3]],
+          [Student.new {|s| s.id=1}, Student.new {|s| s.id=1}, '3', DateTime.new(1970,1,1)],
+          [Student.new {|s| s.id=1}, nil, '3', "1-1-1970"],
+          [Student.new {|s| s.id=1}, nil, '3+', DateTime.new(1970,1,1)],
+          [Student.new {|s| s.id=1}, nil, 5542, DateTime.new(1970,1,1)],
+          [nil, nil, '3+', DateTime.new(1970,1,1)]
       ]
     end
 
@@ -161,7 +156,6 @@ describe 'Model "Grade"' do
       g.grade = '4-'
       g.student = st
       g.subject = su
-      g.weight = 1.0
       g.date = DateTime.new(1970,1,1)
       g.save
 
@@ -174,8 +168,7 @@ describe 'Model "Grade"' do
         g.student = grade[0]
         g.subject = grade[1]
         g.grade = grade[2]
-        g.weight = grade[3]
-        g.date = grade[4]
+        g.date = grade[3]
         assert_equal false, (g.valid?)
       end
     end
@@ -203,7 +196,6 @@ describe 'Model "Grade"' do
       g.grade = '4-'
       g.student = s
       g.subject = su
-      g.weight = 1.0
       g.date = DateTime.new(1970,1,1)
       g.save
 
@@ -240,7 +232,6 @@ describe 'Model "Grade"' do
       g.grade = '4-'
       g.student = s
       g.subject = su
-      g.weight = 1.0
       g.date = DateTime.new(1970,1,1)
       g.save
 

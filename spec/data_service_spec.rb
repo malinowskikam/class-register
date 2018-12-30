@@ -94,9 +94,9 @@ describe 'Zarządzanie danymi' do
             @das.import_data :subjects,'temp.csv'
 
             f = File.open("temp.csv","w")
-            f.write("1;1;1;4;0.5;1970-01-03 00:00:00\n");
-            f.write("2;2;3;3+;0.4;1970-01-01 00:00:00\n");
-            f.write("3;3;2;5-;1;1970-01-02 00:00:00\n");
+            f.write("1;1;1;4;0.1970-01-03 00:00:00\n");
+            f.write("2;2;3;3+;0.1970-01-01 00:00:00\n");
+            f.write("3;3;2;5-;1970-01-02 00:00:00\n");
 
             f.close
 

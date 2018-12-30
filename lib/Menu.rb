@@ -649,8 +649,6 @@ class Menu
                             g.subject = Subject.select.where(name: subjectname).first
                             puts "Podaj ocenę:"
                             g.grade = gets.chomp
-                            puts "Podaj wagę:"
-                            g.weight = gets.chomp.to_f
                             puts "Podaj dzień:"
                             day = gets.chomp
                             puts "Podaj miesiąc:"
@@ -689,101 +687,69 @@ class Menu
                             puts "Podaj ocenę:"
                             grade = gets.chomp
                             if grade.match(/^[1-6][+-]?$/)
-                                puts "Podaj wagę:"
-                                weight = gets.chomp.to_f
-                                if weight > 0 and weight <= 2
-                                    puts "Podaj dzień:"
-                                    day = gets.chomp
-                                    puts "Podaj miesiąc:"
-                                    month = gets.chomp
-                                    puts "Podaj rok:"
-                                    year = gets.chomp
-                                    if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
-                                        puts "Podaj wartość, którą chcesz edytować:"
-                                        positions = [
-                                            {"id" => :OCENA, "label" => "Ocena"},
-                                            {"id" => :WAGA, "label" => "Waga"},
-                                            {"id" => :DATA, "label" => "Data"}
-                                        ]
-                                        render_positions positions
-                                        puts "\nWybór:"
-                                        option = gets.chomp.to_i
-                                        if option>0 and option<=positions.length
-                                            case positions[option-1]["id"]
-                                            when :OCENA
-                                                puts "Podaj nową ocenę:"
-                                                newgrade = gets.chomp
-                                                if newgrade.match(/^[1-6][+-]?$/)
-                                                    if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                   subject: Subject.select.where(name: subject),
-                                                                   grade: grade,
-                                                                   weight: weight,
-                                                                   date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                                        Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                    subject: Subject.select.where(name: subject),
-                                                                    grade: grade,
-                                                                    weight: weight,
-                                                                    date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:grade => newgrade)
-                                                        puts "\nNowa ocena została zapisana!"
-                                                    else
-                                                        puts "\nPodana ocena nie istnieje w bazie danych!"
-                                                    end
+                                puts "Podaj dzień:"
+                                day = gets.chomp
+                                puts "Podaj miesiąc:"
+                                month = gets.chomp
+                                puts "Podaj rok:"
+                                year = gets.chomp
+                                if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
+                                    puts "Podaj wartość, którą chcesz edytować:"
+                                    positions = [
+                                        {"id" => :OCENA, "label" => "Ocena"},
+                                        {"id" => :DATA, "label" => "Data"}
+                                    ]
+                                    render_positions positions
+                                    puts "\nWybór:"
+                                    option = gets.chomp.to_i
+                                    if option>0 and option<=positions.length
+                                        case positions[option-1]["id"]
+                                        when :OCENA
+                                            puts "Podaj nową ocenę:"
+                                            newgrade = gets.chomp
+                                            if newgrade.match(/^[1-6][+-]?$/)
+                                                if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                               subject: Subject.select.where(name: subject),
+                                                               grade: grade,
+                                                               date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
+                                                    Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                                subject: Subject.select.where(name: subject),
+                                                                grade: grade,
+                                                                date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:grade => newgrade)
+                                                    puts "\nNowa ocena została zapisana!"
                                                 else
-                                                    puts "\nPodano nieprawidłową ocenę! Spróbuj jeszcze raz."
+                                                    puts "\nPodana ocena nie istnieje w bazie danych!"
                                                 end
-                                            when :WAGA
-                                                puts "Podaj nową wagę:"
-                                                newweight = gets.chomp.to_f
-                                                if newweight > 0 and newweight <= 2
-                                                    if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                  subject: Subject.select.where(name: subject),
-                                                                  grade: grade,
-                                                                  weight: weight,
-                                                                  date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                                        Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                    subject: Subject.select.where(name: subject),
-                                                                    grade: grade,
-                                                                    weight: weight,
-                                                                    date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:weight=> newweight)
-                                                        puts "\nNowa waga została zapisana!"
-                                                    else
-                                                        puts "\nPodana ocena nie istnieje w bazie danych!"
-                                                    end
-                                                else
-                                                    puts "\nPodano nieprawidłową wagę! Spróbuj jeszcze raz."
-                                                end
-                                            when :DATA
-                                                puts "Podaj dzień:"
-                                                newday = gets.chomp
-                                                puts "Podaj miesiąc:"
-                                                newmonth = gets.chomp
-                                                puts "Podaj rok:"
-                                                newyear = gets.chomp
-                                                if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and newyear.to_i<10000
-                                                    if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                   subject: Subject.select.where(name: subject),
-                                                                   grade: grade,
-                                                                   weight: weight,
-                                                                   date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                                        Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                    subject: Subject.select.where(name: subject),
-                                                                    grade: grade,
-                                                                    weight: weight,
-                                                                    date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
+                                            else
+                                                puts "\nPodano nieprawidłową ocenę! Spróbuj jeszcze raz."
+                                            end
+                                        when :DATA
+                                            puts "Podaj dzień:"
+                                            newday = gets.chomp
+                                            puts "Podaj miesiąc:"
+                                            newmonth = gets.chomp
+                                            puts "Podaj rok:"
+                                            newyear = gets.chomp
+                                            if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and newyear.to_i<10000
+                                                if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                               subject: Subject.select.where(name: subject),
+                                                               grade: grade,
+                                                               date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
+                                                    Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                                subject: Subject.select.where(name: subject),
+                                                                grade: grade,
+                                                                date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
                                                     puts "\nNowa data została zapisana!"
-                                                    else
-                                                        puts "\nPodana ocena nie istnieje w bazie danych!"
-                                                    end
                                                 else
-                                                    puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
+                                                    puts "\nPodana ocena nie istnieje w bazie danych!"
                                                 end
+                                            else
+                                                puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
                                             end
                                         end
-                                    else
-                                        puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
                                     end
                                 else
-                                    puts "\nPodałeś nieprawidłową wagę! Spróbuj ponownie."
+                                    puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
                                 end
                             else
                                 puts "\nPodałeś nieprawidłową ocenę! Spróbuj ponownie."
@@ -812,35 +778,27 @@ class Menu
                             puts "Podaj ocenę:"
                             grade = gets.chomp
                             if grade.match(/^[1-6][+-]?$/)
-                                puts "Podaj wagę:"
-                                weight = gets.chomp.to_f
-                                if weight > 0 and weight <= 2
-                                    puts "Podaj dzień:"
-                                    day = gets.chomp
-                                    puts "Podaj miesiąc:"
-                                    month = gets.chomp
-                                    puts "Podaj rok:"
-                                    year = gets.chomp
-                                    if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
-                                        if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                       subject: Subject.select.where(name: subject),
-                                                       grade: grade,
-                                                       weight: weight,
-                                                       date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                            Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                        subject: Subject.select.where(name: subject),
-                                                        grade: grade,
-                                                        weight: weight,
-                                                        date: DateTime.new(year.to_i, month.to_i, day.to_i)).delete
-                                            puts "\nPodana ocena została usunięta z bazy!"
-                                        else
-                                            puts "\nPodana ocena nie istnieje w bazie danych!"
-                                        end
+                                puts "Podaj dzień:"
+                                day = gets.chomp
+                                puts "Podaj miesiąc:"
+                                month = gets.chomp
+                                puts "Podaj rok:"
+                                year = gets.chomp
+                                if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
+                                    if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                   subject: Subject.select.where(name: subject),
+                                                   grade: grade,
+                                                   date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
+                                        Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
+                                                    subject: Subject.select.where(name: subject),
+                                                    grade: grade,
+                                                    date: DateTime.new(year.to_i, month.to_i, day.to_i)).delete
+                                        puts "\nPodana ocena została usunięta z bazy!"
                                     else
-                                        puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
+                                        puts "\nPodana ocena nie istnieje w bazie danych!"
                                     end
                                 else
-                                    puts "\nPodałeś nieprawidłową wagę! Spróbuj ponownie."
+                                    puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
                                 end
                             else
                                 puts "\nPodałeś nieprawidłową ocenę! Spróbuj ponownie."
@@ -857,7 +815,7 @@ class Menu
                 gets
             when :WYSWIETL
               clear
-                str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Ocena".ljust(10) + " | " + "Waga".ljust(10) + " | " + "Data wystawienia".ljust(15)
+                str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Ocena".ljust(10) + " | " + "Data wystawienia".ljust(15)
                 puts str
                 puts "---------------------------------------------------------------------------------------------------------------"
                 Grade.all.each do |grade|
@@ -865,7 +823,6 @@ class Menu
                         " | " + grade.student.student_number.to_s.ljust(20) +
                         " | " + grade.subject.name.ljust(30) +
                         " | " + grade.grade.ljust(10) +
-                        " | " + grade.weight.to_s.ljust(10) +
                         " | " + grade.date.strftime("%F").ljust(15)
                     puts str
                 end

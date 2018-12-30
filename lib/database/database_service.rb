@@ -54,7 +54,6 @@ class DatabaseService
             foreign_key :student_id, :students, on_delete: :cascade,  null: false
             foreign_key :subject_id, :subjects, on_delete: :cascade,  null: false
             String :grade, null: false
-            Double :weight, null: false
             DateTime :date, null: false
         end
     end
