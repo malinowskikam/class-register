@@ -815,18 +815,30 @@ class Menu
                 gets
             when :WYSWIETL
               clear
-                str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Ocena".ljust(10) + " | " + "Data wystawienia".ljust(15)
-                puts str
-                puts "---------------------------------------------------------------------------------------------------------------"
-                Grade.all.each do |grade|
-                    str = grade.student.student_class.ljust(10) +
-                        " | " + grade.student.student_number.to_s.ljust(20) +
-                        " | " + grade.subject.name.ljust(30) +
-                        " | " + grade.grade.ljust(10) +
-                        " | " + grade.date.strftime("%F").ljust(15)
+              puts "Podaj klasę:"
+              studentclass = gets.chomp
+              puts "Podaj numer w dzienniku:"
+              studentnumber = gets.chomp.to_i
+              if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
+                  if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
+                    str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Ocena".ljust(10) + " | " + "Data wystawienia".ljust(15)
                     puts str
-                end
-              puts "\nKliknij, aby kontynuować..."
+                    puts "---------------------------------------------------------------------------------------------------------------"
+                    Grade.all.each do |grade|
+                        str = grade.student.student_class.ljust(10) +
+                            " | " + grade.student.student_number.to_s.ljust(20) +
+                            " | " + grade.subject.name.ljust(30) +
+                            " | " + grade.grade.ljust(10) +
+                            " | " + grade.date.strftime("%F").ljust(15)
+                        puts str
+                    end
+                    puts "\nKliknij, aby kontynuować..."
+                  else
+                      puts "Podany student nie istnieje w bazie danych! Spróbuj ponownie."
+                  end
+              else
+                  puts "Podano nieprawidłowe dane! Spróbuj ponownie."
+              end
               gets
             when :POWROT
                 @flagGrades=false
@@ -886,7 +898,7 @@ class Menu
                         puts "\nPodany student nie istnieje w bazie danych!"
                     end
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodano nieprawidłowe dane! Spróbuj ponownie."
                 end
                 gets
             when :EDYTUJ
@@ -952,13 +964,13 @@ class Menu
                                 end
                             end
                         else
-                            puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
+                            puts "\nPodano nieprawidłową datę! Spróbuj ponownie."
                         end
                     else
                         puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
                     end
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodano nieprawidłowe dane! Spróbuj ponownie."
                 end
                 gets
             when :USUN
@@ -991,7 +1003,7 @@ class Menu
                         puts "\nPodany student nie istnieje w bazie danych!"
                     end
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodano nieprawidłowe dane! Spróbuj ponownie."
                 end
                 gets
             when :WYSWIETL
