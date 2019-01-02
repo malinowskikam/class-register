@@ -1,6 +1,6 @@
 require File.join($__lib__,'database','database_service')
-class StudentModelTest < Minitest::Test
-  class StudentModelTworzenieTest < Minitest::Test
+class ModelStudentTest < Minitest::Test
+  class ModelStudentTworzenieTest < Minitest::Test
     def setup
       @dbs = DatabaseService.new Sequel.sqlite
     end
@@ -96,7 +96,7 @@ class StudentModelTest < Minitest::Test
         end
     end
 
-   class StudentModelWalidacjaTest < Minitest::Test
+   class ModelStudentWalidacjaTest < Minitest::Test
     def setup
       @dbs = DatabaseService.new Sequel.sqlite
     end
