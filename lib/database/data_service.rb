@@ -42,7 +42,7 @@ class DataService
                         s.id=data[0].to_i
                         s.firstname=data[1]
                         s.lastname=data[2]
-                        s.birthdate=DateTime.strptime(data[3],"%Y-%d-%m %H:%M:%S")# DOPISAĆ PARSOWANIE DATY!!!!
+                        s.birthdate=data[3]
                         s.student_class=data[4]
                         s.student_number=data[5].to_i
                         s.save
@@ -59,7 +59,7 @@ class DataService
                         s.id=data[0].to_i
                         s.firstname=data[1]
                         s.lastname=data[2]
-                        s.birthdate=data[3]# DOPISAĆ PARSOWANIE DATY!!!!
+                        s.birthdate=data[3]
                         s.student_class=data[4]
                         s.student_number=data[5].to_i
                         s.save
@@ -83,7 +83,7 @@ class DataService
                         n.id=data[0].to_i
                         n.student_id=data[1].to_i
                         n.text=data[2]
-                        n.date=data[3]# DOPISAĆ PARSOWANIE DATY!!!!
+                        n.date=data[3]
                         n.save
                     rescue
                         p "wystąpił błąd w linii: " + i.to_s
@@ -98,7 +98,7 @@ class DataService
                         n.id=data[0].to_i
                         n.student_id=data[1].to_i
                         n.text=data[2]
-                        n.date=data[3]# DOPISAĆ PARSOWANIE DATY!!!!
+                        n.date=data[3]
                         n.save
                     rescue
                         p "wystąpił błąd w linii: " + i.to_s
@@ -121,7 +121,7 @@ class DataService
                         g.student_id=data[1].to_i
                         g.subject_id=data[2].to_i
                         g.grade=data[3]
-                        g.date=data[4]# DOPISAĆ PARSOWANIE DATY!!!!
+                        g.date=data[4]
                         g.save
                     rescue
                         p "wystąpił błąd w linii: " + i.to_s
@@ -137,7 +137,7 @@ class DataService
                         g.student_id=data[1].to_i
                         g.subject_id=data[2].to_i
                         g.grade=data[3]
-                        g.date=data[4]# DOPISAĆ PARSOWANIE DATY!!!!
+                        g.date=data[4]
                         g.save
                     rescue
                         p "wystąpił błąd w linii: " + i.to_s
@@ -180,6 +180,23 @@ class DataService
             else
                 raise StandardError, "nieobsługiwane źródło"
             end
+        else
+            raise StandardError, "nieobsługiwana tabela" 
+        end
+    end
+
+    def export_data table,file
+        dbs = DatabaseService.new @db
+        case table
+        when :students #id,firstname,lastname,birthdate,student_class,student_number
+            f = File.open file,'w'
+            Student.each do |s|
+        when :notes #id, student_id, text, date
+            f = File.open file,'w'
+        when :grades #id,student_id,subject_id,grade,date
+            f = File.open file,'w'
+        when :subjects #id,name
+            f = File.open file,'w'
         else
             raise StandardError, "nieobsługiwana tabela" 
         end
