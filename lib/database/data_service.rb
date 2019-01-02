@@ -184,21 +184,4 @@ class DataService
             raise StandardError, "nieobsługiwana tabela" 
         end
     end
-
-    def export_data table,file
-        dbs = DatabaseService.new @db
-        case table
-        when :students #id,firstname,lastname,birthdate,student_class,student_number
-            f = File.open file,'w'
-            Student.each do |s|
-        when :notes #id, student_id, text, date
-            f = File.open file,'w'
-        when :grades #id,student_id,subject_id,grade,date
-            f = File.open file,'w'
-        when :subjects #id,name
-            f = File.open file,'w'
-        else
-            raise StandardError, "nieobsługiwana tabela" 
-        end
-    end
 end

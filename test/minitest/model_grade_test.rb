@@ -15,7 +15,7 @@ class ModelGradeTest < Minitest::Test
       @dbs = DatabaseService.new Sequel.sqlite
     end
 
-    def test_dodawanie_wpisów
+    def test_dodawanie_wpisow
       st = Student.new
       st.firstname = 'Jan'
       st.lastname = 'Kowalski'
@@ -38,7 +38,7 @@ class ModelGradeTest < Minitest::Test
       assert_equal 1, (Grade.select.all.count)
     end
 
-    def test_modyfikowanie_wpisów
+    def test_modyfikowanie_wpisow
       st = Student.new
       st.firstname = 'Jan'
       st.lastname = 'Kowalski'
@@ -65,7 +65,7 @@ class ModelGradeTest < Minitest::Test
       assert_equal ['5+'], ([Grade[g.id].grade])
     end
 
-    def test_usuwanie_wpisów 
+    def test_usuwanie_wpisow 
       st = Student.new
       st.firstname = 'Jan'
       st.lastname = 'Kowalski'
@@ -87,10 +87,10 @@ class ModelGradeTest < Minitest::Test
 
       g.delete
 
-      assert_equal 0, (Note.select.all.count)
+      assert_equal 0, (Grade.select.all.count)
     end
 
-    def test_czytanie_wpisów
+    def test_czytanie_wpisow
       st1 = Student.new
       st1.firstname = 'Jan'
       st1.lastname = 'Kowalski'
@@ -147,12 +147,6 @@ class ModelGradeTest < Minitest::Test
 
       assert_equal true, (g.valid?)
     end
-  end
-
-  class ModelGradeAsocjacjaTest < Minitest::Test
-    def setup
-      @dbs = DatabaseService.new Sequel.sqlite
-    end
 
     def test_niepoprawne_wpisy
       invalid_grades = [
@@ -176,9 +170,14 @@ class ModelGradeTest < Minitest::Test
         assert_equal false, (g.valid?)
       end
     end
+  end
 
+  class ModelGradeAsocjacjaTest < Minitest::Test
+    def setup
+      @dbs = DatabaseService.new Sequel.sqlite
+    end
 
-    def test_dostęp_do_obiektu_student 
+    def test_dostep_do_obiektu_student 
       s = Student.new
       s.firstname = 'Jan'
       s.lastname = 'Kowalski'
@@ -208,7 +207,7 @@ class ModelGradeTest < Minitest::Test
       refute_nil (s2)
     end
 
-    def test_dostęp_do_obiektu_subject
+    def test_dostep_do_obiektu_subject
       s = Student.new
       s.firstname = 'Jan'
       s.lastname = 'Kowalski'
