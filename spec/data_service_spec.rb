@@ -272,5 +272,9 @@ describe 'Zarządzanie danymi' do
             expect{(@das.export_data :invalid_table, "temp.csv")}.to raise_error InvalidTableError
             File.delete("temp.csv")
         end
+
+        it 'nienadpisywalny plik' do
+            expect{(@das.export_data :students, "\0")}.to raise_error ArgumentError
+        end
     end
 end
