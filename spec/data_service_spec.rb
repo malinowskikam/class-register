@@ -102,8 +102,76 @@ describe 'Zarządzanie danymi' do
 
             @das.import_data :grades,'temp.csv'
 
+            File.delete 'temp.csv'
+
             expect(Grade.select.all.count).to eq 3
 
+        end
+    end
+
+    context 'import z ramu' do
+        before do
+            @db = Sequel.sqlite
+            @dbs = DatabaseService.new @db
+            @das = DataService.new @db
+        end
+
+        it 'testowe dane' do
+            @das.deploy_demo_data
+
+            expect(Student.select.all.count).not_to eq 0
+            expect(Note.select.all.count).not_to eq 0
+            expect(Grade.select.all.count).not_to eq 0
+            expect(Subject.select.all.count).not_to eq 0
+        end
+    end
+
+    context 'export do pliku' do
+        before do
+            @db = Sequel.sqlite
+            @dbs = DatabaseService.new @db
+            @das = DataService.new @db
+            @testfile = "test.csv"
+        end
+
+        it 'tabela students' do
+            @das.deploy_demo_data
+            @das.export_data :students,@testfile
+            lines = File.read(@testfile).each_line.count
+            File.delete @testfile
+            expect(lines).to eq Student.select.all.count
+        end
+
+        it 'tabela subjects' do
+            @das.deploy_demo_data
+            @das.export_data :subjects,@testfile
+            lines = File.read(@testfile).each_line.count
+            File.delete @testfile
+            expect(lines).to eq Subject.select.all.count
+        end
+
+        it 'tabela notes' do
+            @das.deploy_demo_data
+            @das.export_data :notes,@testfile
+            lines = File.read(@testfile).each_line.count
+            File.delete @testfile
+            expect(lines).to eq Note.select.all.count
+        end
+
+        it 'tabela grades' do
+            @das.deploy_demo_data
+            @das.export_data :grades,@testfile
+            lines = File.read(@testfile).each_line.count
+            File.delete @testfile
+            expect(lines).to eq Grade.select.all.count
+        end
+    end
+
+    context 'import/export błędy' do
+        before do
+            @db = Sequel.sqlite
+            @dbs = DatabaseService.new @db
+            @das = DataService.new @db
         end
     end
 end
