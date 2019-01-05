@@ -14,24 +14,25 @@ class DatabaseZarzadzanieTest < Minitest::Test
 
     class DatabaseTworzenieTabelTest < Minitest::Test
     def setup
-      @dbs = DatabaseService.new Sequel.sqlite
+      @db = Sequel.sqlite
+      @dbs = DatabaseService.new @db
     end
 
 
         def test_tabela_students 
-            assert_equal true, (@dbs.table_exists? :students)
+            assert_equal true, (@db.table_exists? :students)
         end
 
         def test_tabela_notes
-            assert_equal true, (@dbs.table_exists? :notes)
+            assert_equal true, (@db.table_exists? :notes)
         end
 
 	def test_tabela_grades 
-            assert_equal true, (@dbs.table_exists? :grades)
+            assert_equal true, (@db.table_exists? :grades)
         end
 
         def test_tabela_subjects 
-            assert_equal true, (@dbs.table_exists? :subjects)
+            assert_equal true, (@db.table_exists? :subjects)
         end
     end
 
