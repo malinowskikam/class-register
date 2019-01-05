@@ -144,19 +144,19 @@ class Menu
             when :DODAJ
 
                 clear
-                s = Student.new
+                student = Student.new
                 puts "Podaj imię:"
-                s.firstname = gets.chomp
+                student.firstname = gets.chomp
                 puts "Podaj nazwisko:"
-                s.lastname = gets.chomp
+                student.lastname = gets.chomp
                 puts "Podaj date urodzenia (yyyy-mm-dd):"
-                s.birthdate = gets.chomp
+                student.birthdate = gets.chomp
                 puts "Podaj klasę, do której uczeń należy:"
-                s.student_class = gets.chomp
+                student.student_class = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                s.student_number = gets.chomp
-                if s.valid?
-                    s.save
+                student.student_number = gets.chomp
+                if student.valid?
+                    student.save
                     puts "\nUczeń został dodany do bazy!"
                 else
                     puts "\nJedna z wartości była nieprawidłowa! Spróbuj ponownie."
@@ -174,6 +174,7 @@ class Menu
                 student = Student.get_by_class_and_number studentclass,studentnumber
 
                 if student != nil
+                    puts
                     puts Student.print_header
                     puts student.to_s
                     puts "\nPodaj wartość, którą chcesz edytować:"
@@ -267,10 +268,15 @@ class Menu
                 student = Student.get_by_class_and_number studentclass,studentnumber
 
                 if student != nil
-                    student.delete
+                    puts
                     puts Student.print_header
                     puts student.to_s
-                    puts "\nPodany student został usunięty z bazy!"    
+                    puts "\nCzy chcesz usunąć wybranego studenta?(t/n)"
+                    
+                    if gets.chomp =="t"
+                        student.delete
+                        puts "\nStudent został usunięty z bazy danych"
+                    end                    
                 else
                     puts "\nPodany student nie istnieje w bazie danych!"
                 end
@@ -310,64 +316,77 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
-              clear
-              s = Subject.new
-              puts "Podaj nazwę przedmiotu:"
-              s.name = gets.chomp
-              if s.valid?
-                s.save
-                puts "\nPrzedmiot został zapisany do bazy!"
-              else
-                puts "\nPodana nazwa jest nieprawidłowa! Spróbuj ponownie."
-              end
-              gets
+
+                clear
+                subject = Subject.new
+                puts "Podaj nazwę przedmiotu:"
+                subject.name = gets.chomp
+                if subject.valid?
+                    subject.save
+                    puts "\nPrzedmiot został zapisany do bazy!"
+                else
+                    puts "\nPodana nazwa jest nieprawidłowa! Spróbuj ponownie."
+                end
+                gets
+
             when :EDYTUJ
+                
                 clear
                 puts "Podaj nazwę:"
                 name = gets.chomp
-                if name.match(/[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/)
-                    if Subject.where(name: name).count == 1
-                        puts "Podaj nową nazwę:"
-                        newname = gets.chomp
-                        if newname.match(/[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/)
-                            Subject.where(name: name).update(:name => newname)
-                            puts "\nPodany przedmiot został zapisany!"
-                        else
-                            puts "\nPodano nieprawidłową nazwę! Spróbuj jeszcze raz."
-                        end
+                subject = Subject.get_by_name name
+                
+                if subject != nil
+                    puts
+                    puts Subject.print_header
+                    puts subject.to_s
+
+                    puts "Podaj nową nazwę:"
+                    subject.name = gets.chomp
+                    if subject.valid?
+                        subject.save
+                        puts "\nPodany przedmiot został zapisany!"
                     else
-                        puts "\nPodany przedmiot nie istnieje w bazie danych!"
+                        puts "\nPodano nieprawidłową nazwę! Spróbuj jeszcze raz."
                     end
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
-                end
+                    puts "\nPodany przedmiot nie istnieje w bazie danych!"
+                end                
                 gets
+
             when :USUN
+                
                 clear
                 puts "Podaj nazwę:"
                 name = gets.chomp
-                if name.match(/[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/)
-                    if Subject.where(name: name).count == 1
-                        Subject.where(name: name).delete
-                        puts "\nPodany przedmiot został usunięty!"
-                    else
-                        puts "\nPodany przedmiot nie istnieje w bazie danych!"
-                    end
+                subject = Subject.get_by_name name
+
+                if subject != nil
+                    puts
+                    puts Subject.print_header
+                    puts subject.to_s
+                    puts "\nCzy chcesz usunąć wybrany przedmiot?(t/n)"
+                    
+                    if gets.chomp =="t"
+                        subject.delete
+                        puts "\nPzedmiot został usunięty z bazy danych"
+                    end    
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodany przedmiot nie istnieje w bazie danych!"
                 end
                 gets
+
             when :WYSWIETL
+
                 clear
-                str = "Nazwa".ljust(30)
-                puts str
-                puts "------------------------------"
+                puts Subject.print_header
                 Subject.each do |subject|
-                    str = subject.name.ljust(30)
-                    puts str
+                    puts subject.to_s
                 end
+
                 puts "\nKliknij, aby kontynuować..."
                 gets
+
             when :POWROT
                 @flagSubjects=false
             end

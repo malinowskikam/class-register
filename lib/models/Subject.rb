@@ -10,4 +10,16 @@ class Subject < Sequel::Model
         validates_min_length 2, :name
         validates_format /[A-ZĄĘĆŹŻŚÓŁ]-?[A-ZĄĘĆŹŻŚÓŁa-ząęćśżźół .]+/, :name
     end
+
+    def self.get_by_name name
+        return Subject.select.where(name: name).first
+    end
+
+    def to_s
+        return self.name.ljust(30)
+    end
+
+    def self.print_header
+        return "Nazwa".ljust(30) + "\n------------------------------"
+    end
 end
