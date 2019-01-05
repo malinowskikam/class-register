@@ -1108,7 +1108,17 @@ class Menu
     end
 
     def self.prepare_database
-        @dbs = DatabaseService.new Sequel.sqlite
+        if ENV["SANES_DB"] == nil
+            @dbs = DatabaseService.new Sequel.sqlite
+        else
+            begin
+                @dbs = DatabaseService.new Sequel.connect ENV["SANES_DB"]
+            rescue
+                p "Błąd podczas łączenia się z bazą danych"
+                gets
+            end
+        end
+
     end
 end
 
