@@ -640,9 +640,47 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :IMPORT
-                puts "import"
+
+                if @das == nil
+                    @das = DataService.new @dbs::db
+                end
+
+                clear
+                puts "Podaj nazwe tabeli"
+                table = gets.chomp
+                puts "Podaj ścieżkę do pliku"
+                source = gets.chomp
+
+                begin
+                    res = @das.import_data table.to_sym,source
+                    puts "Pomyślnie importowano " + res[0].to_s + " linii"
+                    res[1].each do |err|
+                        puts "Błąd w linii " + err.to_s
+                    end
+                rescue
+                    puts "Błąd podczas importowania danych"
+                end
+                gets
+
             when :EKSPORT
-                puts "eksport"
+                
+                if @das == nil
+                    @das = DataService.new @dbs::db
+                end
+
+                clear
+                puts "Podaj nazwe tabeli"
+                table = gets.chomp
+                puts "Podaj ścieżkę do pliku"
+                source = gets.chomp
+                begin
+                    @das.export_data table.to_sym,source
+                    puts "Pomyślnie ekspotowano dane"
+                rescue
+                    puts "Błąd podczas eksportowania danych"
+                end
+                gets
+
             when :DEMO
                 
                 if @das == nil
