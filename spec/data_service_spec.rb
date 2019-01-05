@@ -173,5 +173,9 @@ describe 'Zarządzanie danymi' do
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
         end
+
+        it 's' do
+
+        end
     end
 end

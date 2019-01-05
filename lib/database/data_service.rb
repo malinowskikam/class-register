@@ -35,28 +35,31 @@ class DataService
             f = File.open source,'r'
         end
 
+        added = 0
+        errors = []
+        i = 1
+
         case table
         when :students #id,firstname,lastname,birthdate,student_class,student_number
-            i = 1
             if source.is_a? String
                 f.each do |line|
                     begin
-                    data = line.split(';')
-                    s=Student.new
-                    s.id=data[0].to_i
-                    s.firstname=data[1]
-                    s.lastname=data[2]
-                    s.birthdate=data[3]
-                    s.student_class=data[4]
-                    s.student_number=data[5].to_i
-                    s.save
+                        data = line.split(';')
+                        s=Student.new
+                        s.id=data[0].to_i
+                        s.firstname=data[1]
+                        s.lastname=data[2]
+                        s.birthdate=data[3]
+                        s.student_class=data[4]
+                        s.student_number=data[5].to_i
+                        s.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
             elsif source.is_a? Array and source[0].is_a? Array
-                i = 1
                 source.each do |data|
                     begin
                         s=Student.new
@@ -67,8 +70,9 @@ class DataService
                         s.student_class=data[4]
                         s.student_number=data[5].to_i
                         s.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
@@ -77,7 +81,6 @@ class DataService
             end
         when :notes #id, student_id, text, date
             if source.is_a? String
-                i = 1
                 f.each do |line|
                     begin
                         data = line.split(';')
@@ -87,13 +90,13 @@ class DataService
                         n.text=data[2]
                         n.date=data[3]
                         n.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
             elsif source.is_a? Array and source[0].is_a? Array
-                i = 1
                 source.each do |data|
                     begin
                         n=Note.new
@@ -102,8 +105,9 @@ class DataService
                         n.text=data[2]
                         n.date=data[3]
                         n.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
@@ -112,7 +116,6 @@ class DataService
             end
         when :grades #id,student_id,subject_id,grade,date
             if source.is_a? String
-                i = 1
                 f.each do |line|
                     begin
                         data = line.split(';')
@@ -123,13 +126,13 @@ class DataService
                         g.grade=data[3]
                         g.date=data[4]
                         g.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
             elsif source.is_a? Array and source[0].is_a? Array
-                i = 1
                 source.each do |data|
                     begin
                         g=Grade.new
@@ -139,8 +142,9 @@ class DataService
                         g.grade=data[3]
                         g.date=data[4]
                         g.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
@@ -157,8 +161,9 @@ class DataService
                         s.id=data[0].to_i
                         s.name=data[1]
                         s.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
@@ -170,8 +175,9 @@ class DataService
                         s.id=data[0].to_i
                         s.name=data[1]
                         s.save
+                        added = added + 1
                     rescue
-                        p "wystąpił błąd w linii: " + i.to_s
+                        errors << i
                     end
                     i = i+1
                 end
@@ -185,6 +191,8 @@ class DataService
         if source.is_a? String
             f.close
         end
+
+        return [added,errors]
     end
 
     def deploy_demo_data

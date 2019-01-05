@@ -113,7 +113,7 @@ class ModelStudentTest < Minitest::Test
         end
 
         def test_niepoprawne_wpisy
-	    invalid_students = [
+	        invalid_students = [
                 [nil,'Nazwisko',DateTime.new(1970,1,1),'1',1],
                 ['','Nazwisko',DateTime.new(1970,1,1),'1',1],
                 ['jan','Nazwisko',DateTime.new(1970,1,1),'1',1],
