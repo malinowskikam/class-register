@@ -2,8 +2,6 @@ $__lib__ = File.join(__dir__,'..','lib')
 require File.join($__lib__,'database','database_service')
 
 class Menu
-    #tworzenie bazy
-    dbs = DatabaseService.new Sequel.sqlite
 
     #czyszczenie konsoli
     def self.clear
@@ -1027,7 +1025,7 @@ class Menu
     end
 
     def self.prepare_database
-        #nie usuwać!
+        dbs = DatabaseService.new Sequel.sqlite
     end
 end
 
