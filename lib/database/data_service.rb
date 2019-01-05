@@ -1,5 +1,11 @@
 require File.join($__lib__,'database','database_service')
 
+class InvalidSourceError < StandardError
+end
+
+class InvalidTableError < StandardError
+end
+
 class DataService
     @db
     attr_reader :db
@@ -77,7 +83,7 @@ class DataService
                     i = i+1
                 end
             else
-                raise StandardError, "nieobsługiwane źródło"
+                raise InvalidSourceError, "nieobsługiwane źródło"
             end
         when :notes #id, student_id, text, date
             if source.is_a? String
@@ -112,7 +118,7 @@ class DataService
                     i = i+1
                 end
             else
-                raise StandardError, "nieobsługiwane źródło"
+                raise InvalidSourceError, "nieobsługiwane źródło"
             end
         when :grades #id,student_id,subject_id,grade,date
             if source.is_a? String
@@ -149,7 +155,7 @@ class DataService
                     i = i+1
                 end
             else
-                raise StandardError, "nieobsługiwane źródło"
+                raise InvalidSourceError, "nieobsługiwane źródło"
             end
         when :subjects #id,name
             if source.is_a? String
@@ -182,10 +188,10 @@ class DataService
                     i = i+1
                 end
             else
-                raise StandardError, "nieobsługiwane źródło"
+                raise InvalidSourceError, "nieobsługiwane źródło"
             end
         else
-            raise StandardError, "nieobsługiwana tabela" 
+            raise InvalidTableError, "nieobsługiwana tabela" 
         end
 
         if source.is_a? String
@@ -243,7 +249,7 @@ class DataService
                 f.write s.id.to_s+";"+s.name+"\n"
             end
         else
-            raise StandardError, "nieobsługiwana tabela" 
+            raise InvalidTableError, "nieobsługiwana tabela" 
         end
         f.close
     end

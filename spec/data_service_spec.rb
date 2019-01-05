@@ -167,15 +167,110 @@ describe 'Zarządzanie danymi' do
         end
     end
 
-    context 'import/export błędy' do
+    context 'błędy inicjalizacji' do
+        let(:invalid_db) do
+            [nil,1,1.0,'1',"1",[nil,1]]
+        end
+
+        it 'nieprawidłowa baza' do
+            invalid_db.each do |db|
+                expect{(DataService.new db)}.to raise_error ArgumentError
+            end
+        end
+
+        it 'brak połączenia' do
+            expect{(DataService.new Sequel::Database.new)}.to raise_error StandardError
+        end
+    end
+
+    context 'błędy importu' do
         before do
             @db = Sequel.sqlite
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
         end
 
-        it 's' do
+        it 'nieprawidłowe źródła' do
+            nieprawidłowe_źródła = [
+                [:students,nil],
+                [:notes,nil],
+                [:grades,nil],
+                [:subjects,nil],
+                [:students,1],
+                [:notes,1],
+                [:grades,1],
+                [:subjects,1],
+                [:students,[]],
+                [:notes,[]],
+                [:grades,[]],
+                [:subjects,[]],
+                [:students,Object.new],
+                [:notes,Object.new],
+                [:grades,Object.new],
+                [:subjects,Object.new],
+            ]
 
+            nieprawidłowe_źródła.each do |line|
+                expect{(@das.import_data line[0],line[1])}.to raise_error InvalidSourceError
+            end
+        end
+
+        it 'nieprawidłowa tabela' do
+            expect{(@das.import_data :invalid_table, [[1],[2],[3]])}.to raise_error InvalidTableError
+        end
+
+        it 'nieprawidłowe linie w źródle' do
+            nieprawidłowe_linie = [
+                [:students, [[1,'Jan',nil,DateTime.new(1970,1,1),'1',1]],[0,[1]]],
+                [:grades,[[1,Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 5542, [1,2,3]]],[0,[1]]],
+                [:subjects,[[1,'język niemiecki']],[0,[1]]],
+                [:notes,[[1,Student.new {|s| s.id=1},'',nil]],[0,[1]]],
+            ]
+            
+            nieprawidłowe_linie.each do |line|
+                expect(@das.import_data line[0],line[1]).to eq line[2]
+            end
+        end
+
+        it 'nieprawidłowe linie w plikach' do
+            f = File.open("temp.csv","w")
+            f.write("1;Jan;Nowak;1970-01-01 00:00:00;rjf7834g587347g;1\n");
+            f.close
+            expect(@das.import_data :students,"temp.csv").to eq [0,[1]]
+
+            f = File.open("temp.csv","w")
+            f.write("1;j polski\n");
+            f.close
+            expect(@das.import_data :subjects,"temp.csv").to eq [0,[1]]
+
+            f = File.open("temp.csv","w")
+            f.write("1;1;1;48v348h848g4;1970-01-03 00:00:00\n");
+            f.close
+            expect(@das.import_data :grades,"temp.csv").to eq [0,[1]]
+
+            f = File.open("temp.csv","w")
+            f.write("1;1;Uwaga 1;data-jakas\n");
+            f.close
+            expect(@das.import_data :notes,"temp.csv").to eq [0,[1]]
+            
+            File.delete 'temp.csv'
+        end
+
+        it 'nieistniejący plik źródła' do
+            expect{(@das.import_data :students, "nieistniejacyplik")}.to raise_error StandardError
+        end
+    end
+
+    context 'błędy exportu' do
+        before do
+            @db = Sequel.sqlite
+            @dbs = DatabaseService.new @db
+            @das = DataService.new @db
+        end
+
+        it 'nieprawidłowa tabela' do
+            expect{(@das.export_data :invalid_table, "temp.csv")}.to raise_error InvalidTableError
+            File.delete("temp.csv")
         end
     end
 end
