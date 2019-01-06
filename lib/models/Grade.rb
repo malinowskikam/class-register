@@ -11,10 +11,8 @@ class Grade < Sequel::Model
     end
 
     def to_f
-        raise ArgumentError, 'nieprawidłowa ocena' unless grade =~ /^[1-6][+-]?$/
-        
         if grade.length==1
-            return this.grade.to_f
+            return grade.to_f
         else
             if grade[1]=='+'
                 return grade[0..0].to_f + 1.0/3.0
@@ -42,5 +40,14 @@ class Grade < Sequel::Model
         else
             return res
         end
+    end
+    
+    def self.print_header
+        return "Id".ljust(4) + " | " + "Przedmiot".ljust(30) + " | " + "Data wystawienia".ljust(25) + " | " + "Ocena".ljust(5) + " | " + "Nazwisko".ljust(30) +
+                "\n---------------------------------------------------------------------------------------------------------------"
+    end
+
+    def to_s
+        return self.id.to_s.ljust(4) + " | " + self.subject.name.ljust(30) + " | " + self.date.to_s.ljust(25) + " | " + self.grade.ljust(5) + " | " + self.student.lastname.ljust(30)
     end
 end

@@ -441,9 +441,9 @@ class Menu
                 subject = Subject.get_by_name subjectname
 
                 if(student==nil)
-                    p "Nie znaleziono podanego ucznia"
+                    puts "Nie znaleziono podanego ucznia"
                 elsif(subject==nil)
-                    p "Nie znaleziono podanego przedmiotu"
+                    puts "Nie znaleziono podanego przedmiotu"
                 else
                     puts
                     puts Student.print_header
@@ -454,7 +454,11 @@ class Menu
                     puts subject.to_s
 
                     grades = Grade.get_by_student_and_subject student,subject
-                    #wyświetl oceny
+                    puts
+                    puts Grade.print_header
+                    grades.each do |grade|
+                        puts grade.to_s
+                    end
 
                     puts "\nŚrednia z przedmiotu: " + (student.get_avg_of_subject subject).to_s
                 end
@@ -482,7 +486,7 @@ class Menu
 
                     puts "Średnia: " + student.get_avg.to_s
                 else
-                    p "Nie znaleziono podanego ucznia"
+                    puts "Nie znaleziono podanego ucznia"
                 end
                 gets
 
@@ -583,212 +587,204 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
+                
                 clear
-                g = Grade.new
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        g.student = Student.select.where(student_class: studentclass, student_number: studentnumber).first
-                        puts "Podaj nazwę przedmiotu:"
-                        subjectname = gets.chomp
-                        if Subject.where(name: subjectname).count == 1
-                            g.subject = Subject.select.where(name: subjectname).first
-                            puts "Podaj ocenę:"
-                            g.grade = gets.chomp
-                            puts "Podaj dzień:"
-                            day = gets.chomp
-                            puts "Podaj miesiąc:"
-                            month = gets.chomp
-                            puts "Podaj rok:"
-                            year = gets.chomp
-                            g.date = DateTime.new
-                            if g.valid? and day.to_i>0 and day.to_i<32 and month.to_i>0 and month.to_i<13 and year.to_i>0 and year.to_i<10000
-                                g.date = DateTime.new(year.to_i, month.to_i, day.to_i)
-                                g.save
-                                puts "\nPodana ocena została zapisana!"
-                            else
-                                puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
-                            end
-                        else
-                            puts "\nPodany przedmiot nie istnieje w bazie! Spróbuj ponownie."
-                        end
-                    else
-                        puts "\nPodany student nie istnieje w bazie danych!"
-                    end
+                studentnumber = gets.chomp
+
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                
+                puts "Podaj nazwę przedmiotu:"
+                subjectname = gets.chomp
+                        
+                subject = Subject.get_by_name subjectname
+
+                if(student==nil)
+                    puts "Nie znaleziono podanego ucznia"
+                elsif(subject==nil)
+                    puts "Nie znaleziono podanego przedmiotu"
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                    puts
+                    puts Student.print_header
+                    puts student.to_s
+
+                    puts
+                    puts Subject.print_header
+                    puts subject.to_s
+
+                    grade = Grade.new
+                    grade.student = student
+                    grade.subject = subject
+
+                    puts "\nPodaj ocenę:"
+                    grade.grade = gets.chomp
+                    puts "Podaj datę (yyyy-mm-dd):"
+                    grade.date = gets.chomp
+                    
+                    if grade.valid?
+                        grade.save
+                        puts "\nPodana ocena została zapisana!"
+                    else
+                        puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
+                    end
+
                 end
                 gets
+
             when :EDYTUJ
+                
                 clear
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        puts "Podaj przedmiot:"
-                        subject = gets.chomp
-                        if Subject.where(name: subject).count == 1
-                            puts "Podaj ocenę:"
-                            grade = gets.chomp
-                            if grade.match(/^[1-6][+-]?$/)
-                                puts "Podaj dzień:"
-                                day = gets.chomp
-                                puts "Podaj miesiąc:"
-                                month = gets.chomp
-                                puts "Podaj rok:"
-                                year = gets.chomp
-                                if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
-                                    puts "Podaj wartość, którą chcesz edytować:"
-                                    positions = [
-                                        {"id" => :OCENA, "label" => "Ocena"},
-                                        {"id" => :DATA, "label" => "Data"}
-                                    ]
-                                    render_positions positions
-                                    puts "\nWybór:"
-                                    option = gets.chomp.to_i
-                                    if option>0 and option<=positions.length
-                                        case positions[option-1]["id"]
-                                        when :OCENA
-                                            puts "Podaj nową ocenę:"
-                                            newgrade = gets.chomp
-                                            if newgrade.match(/^[1-6][+-]?$/)
-                                                if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                               subject: Subject.select.where(name: subject),
-                                                               grade: grade,
-                                                               date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                                    Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                subject: Subject.select.where(name: subject),
-                                                                grade: grade,
-                                                                date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:grade => newgrade)
-                                                    puts "\nNowa ocena została zapisana!"
-                                                else
-                                                    puts "\nPodana ocena nie istnieje w bazie danych!"
-                                                end
-                                            else
-                                                puts "\nPodano nieprawidłową ocenę! Spróbuj jeszcze raz."
-                                            end
-                                        when :DATA
-                                            puts "Podaj dzień:"
-                                            newday = gets.chomp
-                                            puts "Podaj miesiąc:"
-                                            newmonth = gets.chomp
-                                            puts "Podaj rok:"
-                                            newyear = gets.chomp
-                                            if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and newyear.to_i<10000
-                                                if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                               subject: Subject.select.where(name: subject),
-                                                               grade: grade,
-                                                               date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                                    Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                                subject: Subject.select.where(name: subject),
-                                                                grade: grade,
-                                                                date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
-                                                    puts "\nNowa data została zapisana!"
-                                                else
-                                                    puts "\nPodana ocena nie istnieje w bazie danych!"
-                                                end
-                                            else
-                                                puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
-                                            end
-                                        end
-                                    end
-                                else
-                                    puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
+                studentnumber = gets.chomp
+                puts "Podaj przedmiot:"
+                subjectname = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                subject = Subject.get_by_name subjectname
+                
+                if subject==nil
+                    puts "Podany przedmiot nie istnieje"
+                elsif student==nil
+                    puts "Podany uczeń nie istnieje"
+                else
+                    grades = Grade.get_by_student_and_subject student,subject
+
+                    if(grades!=nil)
+                        puts
+                        puts Grade.print_header
+                        grades.each do |grade|
+                            puts grade.to_s
+                        end
+
+                        puts "\nPodaj id:"
+                        id = gets.chomp
+
+                        grade = Grade[id]
+                        if(grade!=nil)
+                            
+                            clear
+                            puts
+                            puts Grade.print_header
+                            puts grade.to_s
+
+                            puts "\nPodaj wartość, którą chcesz edytować:"
+                            
+                            positions = [
+                                {"id" => :OCENA, "label" => "Ocena"},
+                                {"id" => :DATA, "label" => "Data"}
+                            ]
+                            render_positions positions
+                            puts "\nWybór:"
+                            option = gets.chomp.to_i
+                            if option>0 and option<=positions.length
+                                case positions[option-1]["id"]
+                                when :OCENA
+                                    puts "Podaj nową ocenę:"
+                                    grade.grade=gets.chomp
+                                when :DATA
+                                    puts "Podaj nową datę:"
+                                    grade.date=gets.chomp
                                 end
+                            end
+                            
+                            if grade.valid?
+                                grade.save
+                                puts "Zapisano ocene"
                             else
-                                puts "\nPodałeś nieprawidłową ocenę! Spróbuj ponownie."
+                                puts "Wprowadzone dane są nieprawidłow. Spróbuj jeszcze raz"
                             end
                         else
-                            puts "\nPodany przedmiot nie istnieje w bazie danych! Spróbuj ponownie."
+                            puts "Brak oceny o id " + id
                         end
                     else
-                        puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
+                        puts "Brak ocen do edytowania"
                     end
-                else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
                 end
                 gets
+                
             when :USUN
+                
                 clear
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        puts "Podaj przedmiot:"
-                        subject = gets.chomp
-                        if Subject.where(name: subject).count == 1
-                            puts "Podaj ocenę:"
-                            grade = gets.chomp
-                            if grade.match(/^[1-6][+-]?$/)
-                                puts "Podaj dzień:"
-                                day = gets.chomp
-                                puts "Podaj miesiąc:"
-                                month = gets.chomp
-                                puts "Podaj rok:"
-                                year = gets.chomp
-                                if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
-                                    if Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                   subject: Subject.select.where(name: subject),
-                                                   grade: grade,
-                                                   date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                        Grade.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                    subject: Subject.select.where(name: subject),
-                                                    grade: grade,
-                                                    date: DateTime.new(year.to_i, month.to_i, day.to_i)).delete
-                                        puts "\nPodana ocena została usunięta z bazy!"
-                                    else
-                                        puts "\nPodana ocena nie istnieje w bazie danych!"
-                                    end
-                                else
-                                    puts "\nPodałeś nieprawidłową datę! Spróbuj ponownie."
-                                end
-                            else
-                                puts "\nPodałeś nieprawidłową ocenę! Spróbuj ponownie."
-                            end
-                        else
-                            puts "\nPodany przedmiot nie istnieje w bazie danych! Spróbuj ponownie."
-                        end
-                    else
-                        puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
-                    end
+                studentnumber = gets.chomp
+                puts "Podaj przedmiot:"
+                subjectname = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                subject = Subject.get_by_name subjectname
+                
+                if subject==nil
+                    puts "Podany przedmiot nie istnieje"
+                elsif student==nil
+                    puts "Podany uczeń nie istnieje"
                 else
-                    puts "\nPodałeś nieprawidłowe dane! Spróbuj ponownie."
+                    grades = Grade.get_by_student_and_subject student,subject
+
+                    if(grades!=nil)
+                        puts
+                        puts Grade.print_header
+                        grades.each do |grade|
+                            puts grade.to_s
+                        end
+
+                        puts "\nPodaj id:"
+                        id = gets.chomp
+
+                        grade = Grade[id]
+                        if(grade!=nil)
+                            clear
+                            puts Grade.print_header
+                            puts grade.to_s
+                            puts "\nCzy chcesz usunąć wybraną ocenę?(t/n)"
+                    
+                            if gets.chomp =="t"
+                                grade.delete
+                                puts "\nOcena została usunięta z bazy danych"
+                            end                    
+                        end
+                    end
                 end
                 gets
+
             when :WYSWIETL
-              clear
-              puts "Podaj klasę:"
-              studentclass = gets.chomp
-              puts "Podaj numer w dzienniku:"
-              studentnumber = gets.chomp.to_i
-              if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                  if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                    str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Przedmiot".ljust(30) + " | " + "Ocena".ljust(10) + " | " + "Data wystawienia".ljust(15)
-                    puts str
-                    puts "---------------------------------------------------------------------------------------------------------------"
-                    Grade.all.each do |grade|
-                        str = grade.student.student_class.ljust(10) +
-                            " | " + grade.student.student_number.to_s.ljust(20) +
-                            " | " + grade.subject.name.ljust(30) +
-                            " | " + grade.grade.ljust(10) +
-                            " | " + grade.date.strftime("%F").ljust(15)
-                        puts str
+              
+                clear
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp
+                puts "Podaj przedmiot:"
+                subjectname = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                subject = Subject.get_by_name subjectname
+                
+                if subject==nil
+                    puts "Podany przedmiot nie istnieje"
+                elsif student==nil
+                    puts "Podany uczeń nie istnieje"
+                else
+                    grades = Grade.get_by_student_and_subject student,subject
+
+                    if(grades!=nil)
+                        puts
+                        puts Grade.print_header
+                        grades.each do |grade|
+                            puts grade.to_s
+                        end
+
+                        puts "\nWciśnij enter, aby kontynuować..."
+                    else
+                        puts "\nBrak ocen dla tego ucznia"
                     end
-                    puts "\nKliknij, aby kontynuować..."
-                  else
-                      puts "Podany student nie istnieje w bazie danych! Spróbuj ponownie."
-                  end
-              else
-                  puts "Podano nieprawidłowe dane! Spróbuj ponownie."
-              end
-              gets
+                end
+                gets
             when :POWROT
                 @flagGrades=false
             end
@@ -813,43 +809,33 @@ class Menu
             case positions[option-1]["id"]
             when :DODAJ
                 clear
-                n = Note.new
+                
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        n.student = Student.select.where(student_class: studentclass, student_number: studentnumber).first
-                        puts "Podaj dzień:"
-                        day = gets.chomp
-                        puts "Podaj miesiąc:"
-                        month = gets.chomp
-                        puts "Podaj rok:"
-                        year = gets.chomp
-                        n.date = DateTime.new
-                        n.text = "test" #do przechodzenia walidacji
-                        if n.valid? and day.to_i>0 and day.to_i<32 and month.to_i>0 and month.to_i<13 and year.to_i>0 and year.to_i<10000
-                            n.date = DateTime.new(year.to_i, month.to_i, day.to_i)
-                            puts "Podaj treść uwagi:"
-                            sometext = gets
-                            n.text = sometext[0...-1] #dodanie do bazy bez \n na końcu
-                            if n.valid?
-                                n.save
-                                puts "\nPodana uwaga została zapisana!"
-                            else
-                                puts "\nWpisana uwaga jest za krótka! Spróbuj ponownie."
-                            end
-                        else
-                            puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
-                        end
+                studentnumber = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                
+                if student != nil
+                    note = Note.new
+                    note.student = student
+                    puts "Podaj datę (yyyy-mm-dd):"
+                    note.date = gets.chomp
+                    puts "Podaj treść uwagi:"
+                    note.text = gets.chomp
+
+                    if note.valid?
+                        note.save
+                        puts "\nZapisano uwagę"
                     else
-                        puts "\nPodany student nie istnieje w bazie danych!"
+                        puts "\nPodane dane są nieprawidłowe. Spróbuj jeszcze raz."
                     end
                 else
-                    puts "\nPodano nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodany uczeń nie istnieje"
                 end
                 gets
+                
             when :EDYTUJ
                 clear
                 puts "Podaj klasę:"
@@ -956,19 +942,36 @@ class Menu
                 end
                 gets
             when :WYSWIETL
+
                 clear
-                str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Data wystawienia".ljust(17) + " | " + "Treść".ljust(60)
-                puts str
-                puts "---------------------------------------------------------------------------------------------------------------"
-                Note.all.each do |note|
-                    str = note.student.student_class.ljust(10) +
-                        " | " + note.student.student_number.to_s.ljust(20) +
-                        " | " + note.date.strftime("%F").ljust(17) +
-                        " | " + note.text.ljust(60)
-                    puts str
+
+                puts "Podaj klasę:"
+                studentclass = gets.chomp
+                puts "Podaj numer w dzienniku:"
+                studentnumber = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                
+                if student != nil
+                    puts
+                    puts Student.print_header
+                    puts student.to_s
+                    puts
+                    puts Note.print_header
+                    notes = Note.get_by_student student
+                    if notes!=nil
+                        notes.each do |note|
+                            puts note.to_s
+                        end
+                        puts "\nKliknij, aby kontynuować..."
+                    else
+                        puts "\nPodany Student nie ma żadnych uwag"
+                    end
+                else
+                    puts "\nPodany student nie istnieje"
                 end
-                puts "\nKliknij, aby kontynuować..."
                 gets
+
             when :POWROT
                 @flagNotes=false
             end

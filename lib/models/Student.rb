@@ -37,7 +37,7 @@ class Student < Sequel::Model
             return 0.0
         else
             grades.each do |grade|
-                sum = sum + grade.to_f
+                sum = sum + grade.grade.to_f
             end
 
             return sum/grades.count
