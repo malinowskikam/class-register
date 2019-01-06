@@ -409,215 +409,83 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :PRZEDMIOT
+
                 clear
-                puts "Podaj nazwę przedmiotu:"
-                subject = gets.chomp
-                if Subject.where(name: subject).count == 1
-                    str = "Nazwa przedmiotu".ljust(30) + " | " + "Średnia".ljust(10)
-                    puts str
-                    puts "----------------------------------------"
-                    sum = 0
-                    grade_float = 0.0
-                    numberofgrades = 0
-                    Grade.select.where(subject: Subject.select.where(name: subject)).each do |grade|
-                        case grade.grade
-                        when "1"
-                            grade_float = 1.0
-                        when "1+"
-                            grade_float = 1.3
-                        when "2-"
-                            grade_float = 1.6
-                        when "2"
-                            grade_float = 2.0
-                        when "2+"
-                            grade_float = 2.3
-                        when "3-"
-                            grade_float = 2.6
-                        when "3"
-                            grade_float = 3.0
-                        when "3+"
-                            grade_float = 3.3
-                        when "4-"
-                            grade_float = 3.6
-                        when "4"
-                            grade_float = 4.0
-                        when "4+"
-                            grade_float = 4.3
-                        when "5-"
-                            grade_float = 4.6
-                        when "5"
-                            grade_float = 5.0
-                        when "5+"
-                            grade_float = 5.3
-                        when "6-"
-                            grade_float = 5.6
-                        when "6"
-                            grade_float = 6.0
-                        end
-                        sum = sum + grade_float
-                        numberofgrades = numberofgrades + 1
-                    end
-                    if numberofgrades != 0
-                        puts subject.ljust(30) + " | " + (sum/numberofgrades).to_f.round(2).to_s.ljust(10)
-                        puts "\nKliknij, aby kontynuować..."
-                    else
-                        puts subject.ljust(30) + " | " + (0).to_f.to_s.ljust(10)
-                        puts "\nKliknij, aby kontynuować..."
-                    end
+                puts "Podaj nazwe przedmiotu:"
+                name = gets.chomp
+                subject = Subject.get_by_name name
+                
+                if subject != nil
+                    puts
+                    puts Subject.print_header
+                    puts subject.to_s
+                    puts "\nSrednia z przedmiotu: " + subject.get_avg.to_s
                 else
                     puts "\nPodany przedmiot nie istnieje w bazie danych!"
                 end
                 gets
+
             when :UCZEN
+
                 clear
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
                 studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        puts "Podaj nazwę przedmiotu:"
-                        subjectname = gets.chomp
-                        if Subject.where(name: subjectname).count == 1
-                            str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Nazwa przedmiotu".ljust(30) + " | " + "Średnia".ljust(10)
-                            puts str
-                            puts "----------------------------------------------------------------------------"
-                            sum = 0
-                            grade_float = 0.0
-                            numberofgrades = 0
-                            Grade.select.where(subject: Subject.select.where(name: subjectname)).each do |grade|
-                                case grade.grade
-                                when "1"
-                                    grade_float = 1.0
-                                when "1+"
-                                    grade_float = 1.3
-                                when "2-"
-                                    grade_float = 1.6
-                                when "2"
-                                    grade_float = 2.0
-                                when "2+"
-                                    grade_float = 2.3
-                                when "3-"
-                                    grade_float = 2.6
-                                when "3"
-                                    grade_float = 3.0
-                                when "3+"
-                                    grade_float = 3.3
-                                when "4-"
-                                    grade_float = 3.6
-                                when "4"
-                                    grade_float = 4.0
-                                when "4+"
-                                    grade_float = 4.3
-                                when "5-"
-                                    grade_float = 4.6
-                                when "5"
-                                    grade_float = 5.0
-                                when "5+"
-                                    grade_float = 5.3
-                                when "6-"
-                                    grade_float = 5.6
-                                when "6"
-                                    grade_float = 6.0
-                                end
-                                sum = sum + grade_float
-                                numberofgrades = numberofgrades + 1
-                            end
-                            if numberofgrades == 0
-                                puts studentclass.ljust(10) + " | " + studentnumber.to_s.ljust(20) + " | " + subjectname.ljust(30) + " | " + (0).to_f.to_s.ljust(10)
-                                puts "\nKliknij, aby kontynuować..."
-                            else
-                                puts studentclass.ljust(10) + " | " + studentnumber.to_s.ljust(20) + " | " +  subjectname.ljust(30) + " | " + (sum/numberofgrades).to_f.round(2).to_s.ljust(10)
-                                puts "\nKliknij, aby kontynuować..."
-                            end
-                        else
-                            puts "\nPodany przedmiot nie istnieje w bazie danych! Spróbuj ponownie."
-                        end
-                    else
-                        puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
-                    end
+
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                
+                puts "Podaj nazwę przedmiotu:"
+                subjectname = gets.chomp
+                        
+                subject = Subject.get_by_name subjectname
+
+                if(student==nil)
+                    p "Nie znaleziono podanego ucznia"
+                elsif(subject==nil)
+                    p "Nie znaleziono podanego przedmiotu"
                 else
-                    puts "Podane dane są nieprawidłowe! Spróbuj ponownie."
+                    puts
+                    puts Student.print_header
+                    puts student.to_s
+
+                    puts
+                    puts Subject.print_header
+                    puts subject.to_s
+
+                    grades = Grade.get_by_student_and_subject student,subject
+                    #wyświetl oceny
+
+                    puts "\nŚrednia z przedmiotu: " + (student.get_avg_of_subject subject).to_s
                 end
                 gets
+
             when :SREDNIAUCZNIA
+                
                 clear
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = getsputs Student.print_header
-                    student.to_s.chomp.to_i
-                if studentclass.matcputs Student.print_header
-                    student.to_sh(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.whereputs Student.print_header
-                    student.to_s(student_class: studentclass, student_number: studentnumber).count == 1
-                        str = "Klasa".ljust(10) + " | " + "Numer w dzienniku".ljust(20) + " | " + "Nazwa przedmiotu".ljust(30) + " | " + "Średnia".ljust(10)
-                        puts str
-                        puts "----------------------------------------------------------------------------"
-                        grade_sum= Array.new
-                        grade_amount = Array.new
-                        grade_name = Subject.map{|x| x.name}
-                        i = 0
-                        grade_name.each do |gradename|
-                            grade_sum[i] = 0.0
-                            grade_amount[i] = 0
-                            Grade.select.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber), subject: Subject.select.where(name: gradename)).each do |grade|
-                                case grade.grade
-                                when "1"
-                                    grade_float = 1.0
-                                when "1+"
-                                    grade_float = 1.3
-                                when "2-"
-                                    grade_float = 1.6
-                                when "2"
-                                    grade_float = 2.0
-                                when "2+"
-                                    grade_float = 2.3
-                                when "3-"
-                                    grade_float = 2.6
-                                when "3"
-                                    grade_float = 3.0
-                                when "3+"
-                                    grade_float = 3.3
-                                when "4-"
-                                    grade_float = 3.6
-                                when "4"
-                                    grade_float = 4.0
-                                when "4+"
-                                    grade_float = 4.3
-                                when "5-"
-                                    grade_float = 4.6
-                                when "5"
-                                    grade_float = 5.0
-                                when "5+"
-                                    grade_float = 5.3
-                                when "6-"
-                                    grade_float = 5.6
-                                when "6"
-                                    grade_float = 6.0
-                                end
-                                grade_sum[i] = grade_sum[i].to_f + grade_float
-                                grade_amount[i] = grade_amount[i] + 1
-                            end
-                            i = i+1
-                        end
-                        i=0
-                        grade_name.each do |gradename|
-                            if grade_amount[i] != 0
-                                puts studentclass.ljust(10) + " | " + studentnumber.to_s.ljust(20) + " | " + gradename.ljust(30) + " | " + (grade_sum[i]/grade_amount[i]).to_f.round(2).to_s.ljust(10)
-                            else
-                                puts studentclass.ljust(10) + " | " + studentnumber.to_s.ljust(20) + " | " + gradename.ljust(30) + " | " + (0).to_f.to_s.ljust(10)
-                            end
-                            i = i+1
-                        end
-                        puts "\nKliknij, aby kontynuować..."
-                    else
-                        puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
+                studentnumber = gets.chomp
+
+                student = Student.get_by_class_and_number studentclass,studentnumber
+
+                if(student != nil)
+                    puts
+                    puts Student.print_header
+                    puts student.to_s
+                    puts
+
+                    student.get_subjects.each do |subject|
+                        puts subject.name + ": " + (student.get_avg_of_subject subject).to_s
                     end
+
+                    puts "Średnia: " + student.get_avg.to_s
                 else
-                    puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
+                    p "Nie znaleziono podanego ucznia"
                 end
                 gets
+
             when :POWROT
                 @flagStatistics=false
             end

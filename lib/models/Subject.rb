@@ -22,4 +22,28 @@ class Subject < Sequel::Model
     def self.print_header
         return "Nazwa".ljust(30) + "\n------------------------------"
     end
+
+    def get_avg
+        raise ArgumentError, 'nieprawidłowa ocena' unless self.valid?
+        sum = 0.0
+        grades = Grade.get_by_subject self
+
+        if grades==nil
+            return 0.0
+        else
+            grades.each do |grade|
+                sum = sum + grade.to_f
+            end
+
+            return sum/grades.count
+        end
+    end
+
+    def student? student
+        if Grade.select.where(subject: self,student: student).first != nil
+            return true
+        else
+            return false
+        end
+    end
 end
