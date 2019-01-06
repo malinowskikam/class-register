@@ -96,4 +96,54 @@ describe 'Model "Subject"' do
       end
     end
   end
+
+  context 'metody związane z obsługą menu' do
+    before do
+      @dbs = DatabaseService.new Sequel.sqlite
+    end
+
+    let(:invalid_names) do
+      [
+          nil,
+          "tretgfdvgs",
+          "aaAA",
+          "123",
+          1,
+          1.0,
+          [1,2,3],
+          "a a a",
+          ""
+      ]
+    end
+
+    it "pobieranie przedmiotu z bazy na podstawie nazwy - przedmiot istnieje" do
+      s = Subject.new
+      s.name = 'Język angielski'
+      s.save
+
+      expect(Subject.get_by_name s.name).to eq(s)
+    end
+
+    it "pobieranie przedmiotu z bazy na podstawie nazwy - przedmiot nie istnieje" do
+      expect(Subject.get_by_name "Przedmiot").to eq(nil)
+    end
+
+    it "pobieranie przedmiotu z bazy na podstawie nazwy - przedmiot nie istnieje" do
+      invalid_names.each do |name|
+        expect(Subject.get_by_name name).to eq(nil)
+      end
+    end
+
+    it 'drukowanie przedmiotu' do
+      s = Subject.new
+      s.name = 'Język angielski'
+      s.save
+
+      expect(s.to_s).to eq('Język angielski               ')
+    end
+
+    it 'drukowanie nagłówka tabeli' do
+      expect(Subject.print_header).to eq("Nazwa                         \n------------------------------")
+    end
+  end
 end

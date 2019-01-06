@@ -159,4 +159,60 @@ describe 'Model "Student"' do
             expect{(s2.save)}.to raise_error Sequel::ValidationFailed
         end
     end
+
+  context 'metody związane z obsługą menu' do
+      before do
+          @dbs = DatabaseService.new Sequel.sqlite
+      end
+
+      let(:invalid_data) do
+          [
+              [nil, nil],
+              [1, "test"],
+              ["fdsgds", "sfdgfds"],
+              [[1,2,3], [1]],
+              [nil, 4.0],
+              [1.0, 1.0],
+              [1, "1"]
+          ]
+      end
+
+      it 'pobieranie studenta z bazy na podstawie klasy oraz numeru w dzienniku - student istnieje' do
+          s1 = Student.new
+          s1.firstname = 'Jan'
+          s1.lastname = 'Nowak'
+          s1.birthdate = DateTime.new(1970,1,1)
+          s1.student_class = '3A'
+          s1.student_number = 4
+          s1.save
+
+          expect(Student.get_by_class_and_number s1.student_class,s1.student_number).to eq(s1)
+      end
+
+      it 'pobieranie studenta z bazy na podstawie klasy oraz numeru w dzienniku - student nie istnieje' do
+        expect(Student.get_by_class_and_number '1', 1).to eq(nil)
+      end
+
+    it 'pobieranie studenta z bazy na podstawie klasy oraz numeru w dzienniku - nieprawidłowe dane' do
+        invalid_data.each do |data|
+            expect(Student.get_by_class_and_number data[0],data[1]).to eq(nil)
+        end
+    end
+
+      it 'drukowanie studenta' do
+          s1 = Student.new
+          s1.firstname = 'Jan'
+          s1.lastname = 'Nowak'
+          s1.birthdate = DateTime.new(1970,1,1)
+          s1.student_class = '3A'
+          s1.student_number = 4
+          s1.save
+
+        expect(s1.to_s).to eq("Jan                  | Nowak                | 1970-01-01      | 3A         | 4              ")
+      end
+
+    it 'drukowanie nagłówka tabeli' do
+      expect(Student.print_header).to eq ("Imię                 | Nazwisko             | Data urodzenia  | Klasa      | Numer w dzienniku\n----------------------------------------------------------------------------------------------")
+    end
+  end
 end
