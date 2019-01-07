@@ -245,4 +245,160 @@ describe 'Model "Grade"' do
       expect(s2).not_to be nil
     end
   end
+
+    context 'metody związane z obsługą menu' do
+      before do
+        @dbs = DatabaseService.new Sequel.sqlite
+      end
+
+      it "pobieranie ocen z danego przedmiotu gdy istnieją" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        g2 = Grade.new
+        g2.grade = '5+'
+        g2.student = s
+        g2.subject = su
+        g2.date = DateTime.new(1970,1,1)
+        g2.save
+
+        expect(Grade.get_by_subject su).to eq([g, g2])
+      end
+
+      it "pobieranie ocen z danego przedmiotu gdy nie istnieją" do
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        expect(Grade.get_by_subject su).to eq(nil)
+      end
+
+      it "pobieranie ocen na podstawie studenta i przedmiotu gdy istnieją" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        expect(Grade.get_by_student_and_subject s,su).to eq([g])
+      end
+
+      it "pobieranie ocen na podstawie studenta i przedmiotu gdy nie istnieją" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        expect(Grade.get_by_student_and_subject s,su).to eq(nil)
+      end
+
+      it "drukowanie nagłówka tabeli" do
+        expect(Grade.print_header).to eq("Id   | Przedmiot                      | Data wystawienia          | Ocena | Nazwisko                      \n---------------------------------------------------------------------------------------------------------------")
+      end
+
+      it "drukowanie oceny" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        expect(g.to_s).to eq("1    | Matematyka                     | 1970-01-01 00:00:00 +0100 | 4-    | Kowalski                      ")
+      end
+
+      it "zmiana oceny na wartość liczbową - wartość bez znaku" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        g = Grade.new
+        g.grade = '4'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        expect(g.to_f).to eq(4)
+      end
+
+      it "zmiana oceny na wartość liczbową - wartość ze znakiem" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        expect(g.to_f).to eq(3.6666666666666665)
+      end
+    end
 end
