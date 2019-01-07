@@ -24,10 +24,6 @@ lub
 ```
 tests_minitest.sh
 ```
-lub
-```
-rake
-```
 # Testy w Rspec
 ```
 bundle exec rspec
@@ -36,7 +32,8 @@ lub
 ```
 tests_rspec.sh
 ```
-lub
+
+# Testy w Rspec i Minitest
 ```
 rake
 ```
