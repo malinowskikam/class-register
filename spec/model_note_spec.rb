@@ -138,7 +138,7 @@ describe 'Model "Note"' do
         end
     end
 
-    context 'asocjacja student-note' do
+    context 'asocjacja' do
         before do
             @dbs = DatabaseService.new Sequel.sqlite
         end
@@ -174,45 +174,54 @@ describe 'Model "Note"' do
             @dbs = DatabaseService.new Sequel.sqlite
         end
 
-      it "drukowanie nagłówka tabeli" do
-        expect(Note.print_header).to eq("Id    | Nazwisko                       | Treść                               | Data wystawienia         \n---------------------------------------------------------------------------------------------------------------")
-      end
+        it "drukowanie nagłówka tabeli" do
+            exp = "Id    | Nazwisko                       | Treść                               | Data wystawienia         \n---------------------------------------------------------------------------------------------------------------"
+            expect(Note.print_header).to eq(exp)
+        end
 
-      it "drukowanie uwagi 1" do
-          s = Student.new
-          s.firstname = 'Jan'
-          s.lastname = 'Kowalski'
-          s.birthdate = DateTime.new(1970,1,1)
-          s.student_class = '3A'
-          s.student_number = 4
-          s.save
+        it "drukowanie uwagi 1" do
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
 
-          n = Note.new
-          n.student=s
-          n.text = 'Note sample text'
-          n.date = DateTime.new(1970,1,1)
-          n.save
+            n = Note.new
+            n.student=s
+            n.text = 'Note sample text'
+            n.date = DateTime.new(1970,1,1)
+            n.save
 
-        expect(n.to_s).to eq("1     | Kowalski                       | Note sample text                    | 1970-01-01               ")
-      end
+            exp = "1     | Kowalski                       | Note sample text                    | 1970-01-01               "
+            expect(n.to_s).to eq(exp)
+        end
 
-      it "drukowanie uwagi 2" do
-          s = Student.new
-          s.firstname = 'Jan'
-          s.lastname = 'Kowalski'
-          s.birthdate = DateTime.new(1970,1,1)
-          s.student_class = '3A'
-          s.student_number = 4
-          s.save
+        it "drukowanie uwagi 2" do
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
 
-          n = Note.new
-          n.student=s
-          n.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-          n.date = DateTime.new(1970,1,1)
-          n.save
+            n = Note.new
+            n.student=s
+            n.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit'
+            n.date = DateTime.new(1970,1,1)
+            n.save
 
-          expect(n.to_s).to eq("1     | Kowalski                       | Lorem ipsum dolor sit amet, cons... | 1970-01-01               ")
-      end
+            exp = "1     | Kowalski                       | Lorem ipsum dolor sit amet, cons... | 1970-01-01               "
+            expect(n.to_s).to eq(exp)
+        end
+    end
+
+    context 'zapytania' do
+        before do
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
 
         it "pobieranie istniejących uwag na podstawie studenta" do
             s = Student.new
@@ -225,11 +234,11 @@ describe 'Model "Note"' do
 
             n = Note.new
             n.student=s
-            n.text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            n.text = 'Lorem ipsum dolor sit amet'
             n.date = DateTime.new(1970,1,1)
             n.save
 
-          expect(Note.get_by_student s).to eq([n])
+            expect(Note.get_by_student s).to eq([n])
         end
 
         it "pobieranie istniejących uwag na podstawie studenta" do
