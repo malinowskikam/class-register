@@ -177,6 +177,17 @@ describe 'Model "Student"' do
           ]
       end
 
+      let(:invalid_data2) do
+        [
+            nil,
+            "test",
+            1,
+            1.0,
+            [1,1,1],
+            Student.new
+        ]
+      end
+
       it 'pobieranie studenta z bazy na podstawie klasy oraz numeru w dzienniku - student istnieje' do
           s1 = Student.new
           s1.firstname = 'Jan'
@@ -213,6 +224,155 @@ describe 'Model "Student"' do
 
     it 'drukowanie nagłówka tabeli' do
       expect(Student.print_header).to eq ("Imię                 | Nazwisko             | Data urodzenia  | Klasa      | Numer w dzienniku\n----------------------------------------------------------------------------------------------")
+    end
+
+    it 'średnia studenta z danego przedmiotu' do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        gg = Grade.new
+        gg.grade = '5-'
+        gg.student = s
+        gg.subject = su
+        gg.date = DateTime.new(1970,1,1)
+        gg.save
+
+      expect(s.get_avg_of_subject su).to eq(4.5)
+    end
+
+      it "średnia studenta z przedmiotu, do którego nie jest przypisany" do
+          s = Student.new
+          s.firstname = 'Jan'
+          s.lastname = 'Kowalski'
+          s.birthdate = DateTime.new(1970,1,1)
+          s.student_class = '3A'
+          s.student_number = 4
+          s.save
+
+          su = Subject.new
+          su.name = "Matematyka"
+          su.save
+
+        expect(s.get_avg_of_subject su).to eq(0.0)
+      end
+
+    it "pobieranie przedmiotów, w których student posiada ocenę/y" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        su2 = Subject.new
+        su2.name = "Fizyka"
+        su2.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        gg = Grade.new
+        gg.grade = '5-'
+        gg.student = s
+        gg.subject = su
+        gg.date = DateTime.new(1970,1,1)
+        gg.save
+
+      expect(s.get_subjects).to eq([su])
+    end
+
+    it "pobieranie przedmiotów, gdy student nie posiada ocen/y" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+      expect(s.get_subjects).to eq([])
+    end
+
+    it "średnia studenta z wszystkich przypisanych do niego przedmiotów" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+        su = Subject.new
+        su.name = "Matematyka"
+        su.save
+
+        su2 = Subject.new
+        su2.name = "Fizyka"
+        su2.save
+
+        g = Grade.new
+        g.grade = '4-'
+        g.student = s
+        g.subject = su
+        g.date = DateTime.new(1970,1,1)
+        g.save
+
+        gg = Grade.new
+        gg.grade = '5-'
+        gg.student = s
+        gg.subject = su
+        gg.date = DateTime.new(1970,1,1)
+        gg.save
+
+        ggg = Grade.new
+        ggg.grade = '2'
+        ggg.student = s
+        ggg.subject = su2
+        ggg.date = DateTime.new(1970,1,1)
+        ggg.save
+
+      expect(s.get_avg).to eq(3.25)
+    end
+
+    it "średnia studenta - żaden przedmiot nie jest przypisany do studenta" do
+        s = Student.new
+        s.firstname = 'Jan'
+        s.lastname = 'Kowalski'
+        s.birthdate = DateTime.new(1970,1,1)
+        s.student_class = '3A'
+        s.student_number = 4
+        s.save
+
+      expect(s.get_avg).to eq(0)
     end
   end
 end

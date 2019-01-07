@@ -24,7 +24,6 @@ class Subject < Sequel::Model
     end
 
     def get_avg
-        raise ArgumentError, 'nieprawidłowa ocena' unless self.valid?
         sum = 0.0
         grades = Grade.get_by_subject self
 

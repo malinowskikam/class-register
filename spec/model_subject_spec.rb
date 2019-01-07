@@ -145,5 +145,58 @@ describe 'Model "Subject"' do
     it 'drukowanie nagłówka tabeli' do
       expect(Subject.print_header).to eq("Nazwa                         \n------------------------------")
     end
+
+    it "średnia wszystkich uczniów z danego przedmiotu - przy istniejących ocenach" do
+      s1 = Student.new
+      s1.firstname = 'Jan'
+      s1.lastname = 'Nowak'
+      s1.birthdate = DateTime.new(1970,1,1)
+      s1.student_class = '3A'
+      s1.student_number = 4
+      s1.save
+
+      s2 = Student.new
+      s2.firstname = 'Andrzej'
+      s2.lastname = 'Kowalski'
+      s2.birthdate = DateTime.new(1970,1,1)
+      s2.student_class = '3A'
+      s2.student_number = 1
+      s2.save
+
+      su = Subject.new
+      su.name = "Matematyka"
+      su.save
+
+      g = Grade.new
+      g.grade = '4-'
+      g.student = s1
+      g.subject = su
+      g.date = DateTime.new(1970,1,1)
+      g.save
+
+      gg = Grade.new
+      gg.grade = '5-'
+      gg.student = s1
+      gg.subject = su
+      gg.date = DateTime.new(1970,1,1)
+      gg.save
+
+      gg = Grade.new
+      gg.grade = '5+'
+      gg.student = s2
+      gg.subject = su
+      gg.date = DateTime.new(1970,1,1)
+      gg.save
+
+      expect(su.get_avg).to eq(4.555555555555556)
+    end
+
+    it "średnia wszystkich uczniów z danego przedmiotu - przy nieistniejących ocenach" do
+      su = Subject.new
+      su.name = "Matematyka"
+      su.save
+
+      expect(su.get_avg).to eq(0.0)
+    end
   end
 end
