@@ -102,6 +102,24 @@ describe 'Model "Subject"' do
       @dbs = DatabaseService.new Sequel.sqlite
     end
 
+    it 'drukowanie przedmiotu' do
+      s = Subject.new
+      s.name = 'Język angielski'
+      s.save
+
+      expect(s.to_s).to eq('Język angielski               ')
+    end
+
+    it 'drukowanie nagłówka tabeli' do
+      expect(Subject.print_header).to eq("Nazwa                         \n------------------------------")
+    end
+  end
+
+  context 'zapytania' do
+    before do
+      @dbs = DatabaseService.new Sequel.sqlite
+    end
+
     let(:invalid_names) do
       [
           nil,
@@ -132,18 +150,6 @@ describe 'Model "Subject"' do
       invalid_names.each do |name|
         expect(Subject.get_by_name name).to eq(nil)
       end
-    end
-
-    it 'drukowanie przedmiotu' do
-      s = Subject.new
-      s.name = 'Język angielski'
-      s.save
-
-      expect(s.to_s).to eq('Język angielski               ')
-    end
-
-    it 'drukowanie nagłówka tabeli' do
-      expect(Subject.print_header).to eq("Nazwa                         \n------------------------------")
     end
 
     it "średnia wszystkich uczniów z danego przedmiotu - przy istniejących ocenach" do
@@ -188,7 +194,7 @@ describe 'Model "Subject"' do
       gg.date = DateTime.new(1970,1,1)
       gg.save
 
-      expect(su.get_avg).to eq(4.555555555555556)
+      expect(su.get_avg).to be_within(0.0001).of(4.555555)
     end
 
     it "średnia wszystkich uczniów z danego przedmiotu - przy nieistniejących ocenach" do
@@ -196,7 +202,7 @@ describe 'Model "Subject"' do
       su.name = "Matematyka"
       su.save
 
-      expect(su.get_avg).to eq(0.0)
+      expect(su.get_avg).to be_within(0.0001).of(0.0)
     end
   end
 end

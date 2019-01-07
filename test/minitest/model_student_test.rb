@@ -185,7 +185,7 @@ class ModelStudentTest < Minitest::Test
         end
     end
 
-    class QuerryTest < Minitest::Test
+    class QueryTest < Minitest::Test
         def setup
             @dbs = DatabaseService.new Sequel.sqlite
         end
