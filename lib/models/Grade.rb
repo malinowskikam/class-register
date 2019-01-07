@@ -48,6 +48,6 @@ class Grade < Sequel::Model
     end
 
     def to_s
-        return self.id.to_s.ljust(4) + " | " + self.subject.name.ljust(30) + " | " + self.date.to_s.ljust(25) + " | " + self.grade.ljust(5) + " | " + self.student.lastname.ljust(30)
+        return self.id.to_s.ljust(4) + " | " + self.subject.name.ljust(30) + " | " + self.date.strftime('%F').ljust(25) + " | " + self.grade.ljust(5) + " | " + self.student.lastname.ljust(30)
     end
 end

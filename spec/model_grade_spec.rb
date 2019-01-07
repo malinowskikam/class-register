@@ -352,7 +352,7 @@ describe 'Model "Grade"' do
         g.date = DateTime.new(1970,1,1)
         g.save
 
-        expect(g.to_s).to eq("1    | Matematyka                     | 1970-01-01 00:00:00 +0100 | 4-    | Kowalski                      ")
+        expect(g.to_s).to eq("1    | Matematyka                     | 1970-01-01                | 4-    | Kowalski                      ")
       end
 
       it "zmiana oceny na wartość liczbową - wartość bez znaku" do

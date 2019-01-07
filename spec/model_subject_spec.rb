@@ -128,7 +128,7 @@ describe 'Model "Subject"' do
       expect(Subject.get_by_name "Przedmiot").to eq(nil)
     end
 
-    it "pobieranie przedmiotu z bazy na podstawie nazwy - przedmiot nie istnieje" do
+    it "pobieranie przedmiotu z bazy na podstawie nazwy - nieprawidłowa nazwa przedmiotu" do
       invalid_names.each do |name|
         expect(Subject.get_by_name name).to eq(nil)
       end

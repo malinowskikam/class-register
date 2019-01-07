@@ -193,7 +193,7 @@ describe 'Model "Note"' do
           n.date = DateTime.new(1970,1,1)
           n.save
 
-        expect(n.to_s).to eq("1     | Kowalski                       | Note sample text                    | 1970-01-01 00:00:00 +0100")
+        expect(n.to_s).to eq("1     | Kowalski                       | Note sample text                    | 1970-01-01               ")
       end
 
       it "drukowanie uwagi 2" do
@@ -211,7 +211,7 @@ describe 'Model "Note"' do
           n.date = DateTime.new(1970,1,1)
           n.save
 
-          expect(n.to_s).to eq("1     | Kowalski                       | Lorem ipsum dolor sit amet, cons... | 1970-01-01 00:00:00 +0100")
+          expect(n.to_s).to eq("1     | Kowalski                       | Lorem ipsum dolor sit amet, cons... | 1970-01-01               ")
       end
 
         it "pobieranie istniejących uwag na podstawie studenta" do

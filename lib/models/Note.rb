@@ -17,9 +17,9 @@ class Note < Sequel::Model
 
     def to_s
         if self.text.length<=35
-            return self.id.to_s.ljust(5) + " | " + self.student.lastname.ljust(30) + " | " + self.text.ljust(35) + " | " + self.date.to_s.ljust(25)
+            return self.id.to_s.ljust(5) + " | " + self.student.lastname.ljust(30) + " | " + self.text.ljust(35) + " | " + self.date.strftime('%F').ljust(25)
         else
-            return self.id.to_s.ljust(5) + " | " + self.student.lastname.ljust(30) + " | " + self.text[0..31].ljust(32) + "... | " + self.date.to_s.ljust(25)
+            return self.id.to_s.ljust(5) + " | " + self.student.lastname.ljust(30) + " | " + self.text[0..31].ljust(32) + "... | " + self.date.strftime('%F').ljust(25)
         end
     end
 
