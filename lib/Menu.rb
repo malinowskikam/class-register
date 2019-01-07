@@ -746,8 +746,12 @@ class Menu
                             if gets.chomp =="t"
                                 grade.delete
                                 puts "\nOcena została usunięta z bazy danych"
-                            end                    
+                            end 
+                        else
+                            puts "\nPodana ocena nie istnieje"                   
                         end
+                    else
+                        puts "Podany uczeń nie ma ocen z tego przedmiotu"
                     end
                 end
                 gets
@@ -808,8 +812,8 @@ class Menu
         if option>0 and option<=positions.length
             case positions[option-1]["id"]
             when :DODAJ
+
                 clear
-                
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
@@ -837,21 +841,37 @@ class Menu
                 gets
                 
             when :EDYTUJ
+
                 clear
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        puts "Podaj dzień:"
-                        day = gets.chomp
-                        puts "Podaj miesiąc:"
-                        month = gets.chomp
-                        puts "Podaj rok:"
-                        year = gets.chomp
-                        if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
-                            puts "Podaj wartość, którą chcesz edytować:"
+                studentnumber = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                
+                if student != nil
+                    puts Note.print_header
+                    notes = Note.get_by_student student
+                    if notes!=nil
+                        notes.each do |note|
+                            puts note.to_s
+                        end
+
+                        puts "\nPodaj id:"
+                        id = gets.chomp
+
+                        note = Note[id]
+                        if(note!=nil)
+                            clear
+                            puts Note.print_header
+                            puts note.to_s
+                            if note.text.length>32
+                                puts "Pełna treść:"
+                                puts  note.text
+                            end
+                            
+                            puts "\nPodaj wartość, którą chcesz edytować:"
                             positions = [
                                 {"id" => :TRESC, "label" => "Treść"},
                                 {"id" => :DATA, "label" => "Data"}
@@ -863,88 +883,80 @@ class Menu
                                 case positions[option-1]["id"]
                                 when :TRESC
                                     puts "Podaj nową treść uwagi:"
-                                    newnote = gets
-                                    newnote = newnote[0...-1]
-                                    if newnote.length>3
-                                        if Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                      date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                            Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                       date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:text => newnote)
-                                            puts "\nNowa treść została zapisana!"
-                                        else
-                                            puts "\nPodana uwaga nie istnieje w bazie danych!"
-                                        end
-                                    else
-                                        puts "\nPodana uwaga jest za krótka! Spróbuj ponownie."
-                                    end
+                                    note.text = gets.chomp
                                 when :DATA
-                                    puts "Podaj dzień:"
-                                    newday = gets.chomp
-                                    puts "Podaj miesiąc:"
-                                    newmonth = gets.chomp
-                                    puts "Podaj rok:"
-                                    newyear = gets.chomp
-                                    if newday.match(/^[1-3][0-9]?$/) and newday.to_i<32 and newmonth.match(/^[1-9][0-2]?$/) and newmonth.to_i<13 and newyear.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and newyear.to_i<10000
-                                        if Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                      date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                            Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                                       date: DateTime.new(year.to_i, month.to_i, day.to_i)).update(:date => DateTime.new(newyear.to_i, newmonth.to_i, newday.to_i))
-                                            puts "\nNowa data została zapisana!"
-                                        else
-                                            puts "\nPodana uwaga nie istnieje w bazie danych!"
-                                        end
-                                    else
-                                        puts "\nPodano nieprawidłowe dane! Spróbuj jeszcze raz."
-                                    end
+                                    puts "Podaj nową datę: (yyyy-mm-dd)"
+                                    note.date = gets.chomp
                                 end
-                            end
+
+                                if note.valid?
+                                    note.save
+                                    puts "Zapisano uwagę"
+                                else
+                                    puts "Wprowadzone dane są nieprawidłow. Spróbuj jeszcze raz"
+                                end
+                            end    
                         else
-                            puts "\nPodano nieprawidłową datę! Spróbuj ponownie."
+                            puts "\nPodana uwaga nie istnieje"                
                         end
                     else
-                        puts "\nPodany student nie istnieje w bazie danych! Spróbuj ponownie."
+                        puts "\nPodany Student nie ma żadnych uwag"
                     end
                 else
-                    puts "\nPodano nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodany student nie istnieje w bazie danych!"
                 end
                 gets
+                
             when :USUN
+                
                 clear
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
-                studentnumber = gets.chomp.to_i
-                if studentclass.match(/^[1-8][A-Z]?$/) and studentnumber>0
-                    if Student.where(student_class: studentclass, student_number: studentnumber).count == 1
-                        puts "Podaj dzień:"
-                        day = gets.chomp
-                        puts "Podaj miesiąc:"
-                        month = gets.chomp
-                        puts "Podaj rok:"
-                        year = gets.chomp
-                        if day.match(/^[1-3][0-9]?$/) and day.to_i<32 and month.match(/^[1-9][0-2]?$/) and month.to_i<13 and year.match(/^[1-9][0-9]?[0-9]?[0-9]?[0-9]?/) and year.to_i<10000
-                            if Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                          date: DateTime.new(year.to_i, month.to_i, day.to_i)).count == 1
-                                Note.where(student: Student.select.where(student_class: studentclass, student_number: studentnumber).first,
-                                           date: DateTime.new(year.to_i, month.to_i, day.to_i)).delete
-                                puts "\nNowa data została usunięta!"
-                            else
-                                puts "\nPodana uwaga nie istnieje w bazie danych!"
+                studentnumber = gets.chomp
+                
+                student = Student.get_by_class_and_number studentclass,studentnumber
+                
+                if student != nil
+                    puts Note.print_header
+                    notes = Note.get_by_student student
+                    if notes!=nil
+                        notes.each do |note|
+                            puts note.to_s
+                        end
+
+                        puts "\nPodaj id:"
+                        id = gets.chomp
+
+                        note = Note[id]
+                        if(note!=nil)
+                            clear
+                            puts Note.print_header
+                            puts note.to_s
+                            if note.text.length>32
+                                puts "Pełna treść:"
+                                puts  note.text
                             end
+                            puts "\nCzy chcesz usunąć wybraną uwagę?(t/n)"
+                    
+                            if gets.chomp =="t"
+                                note.delete
+                                puts "\nUwaga została usunięta z bazy danych"
+                            end    
                         else
-                            puts "\nPodane dane są nieprawidłowe! Spróbuj ponownie."
+                            puts "\nPodana uwaga nie istnieje"                
                         end
                     else
-                        puts "\nPodany student nie istnieje w bazie danych!"
+                        puts "\nPodany Student nie ma żadnych uwag"
                     end
                 else
-                    puts "\nPodano nieprawidłowe dane! Spróbuj ponownie."
+                    puts "\nPodany student nie istnieje w bazie danych!"
                 end
                 gets
+
             when :WYSWIETL
 
                 clear
-
                 puts "Podaj klasę:"
                 studentclass = gets.chomp
                 puts "Podaj numer w dzienniku:"
@@ -987,6 +999,7 @@ class Menu
             rescue
                 p "Błąd podczas łączenia się z bazą danych"
                 gets
+                fail
             end
         end
 
