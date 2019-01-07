@@ -241,7 +241,7 @@ describe 'Model "Note"' do
             expect(Note.get_by_student s).to eq([n])
         end
 
-        it "pobieranie istniejących uwag na podstawie studenta" do
+        it "pobieranie nieistniejących uwag na podstawie studenta" do
             s = Student.new
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'

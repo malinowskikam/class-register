@@ -1,20 +1,20 @@
 require File.join($__lib__,'database','database_service')
 class ModelStudentTest < Minitest::Test
-  class ModelStudentTworzenieTest < Minitest::Test
-    def setup
-      @dbs = DatabaseService.new Sequel.sqlite
-    end
+    class ModelObjectTest < Minitest::Test
+        def setup
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
         
-	def test_tworzenie
+	    def test_tworzenie
             s = Student.new
             assert_instance_of(Student,s)
         end
     end
 
-    class StudentModelCRUDTest < Minitest::Test
-    def setup
-      @dbs = DatabaseService.new Sequel.sqlite
-    end
+    class CRUDTest < Minitest::Test
+        def setup
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
 
         def test_dodawanie_wpisow
             s = Student.new
@@ -30,7 +30,7 @@ class ModelStudentTest < Minitest::Test
             refute_nil (f)
         end
 
-       def test_modyfikowanie_wpisow
+        def test_modyfikowanie_wpisow
             s = Student.new
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'
@@ -96,10 +96,10 @@ class ModelStudentTest < Minitest::Test
         end
     end
 
-   class ModelStudentWalidacjaTest < Minitest::Test
-    def setup
-      @dbs = DatabaseService.new Sequel.sqlite
-    end
+    class ValidationTest < Minitest::Test
+        def setup
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
         
         def test_poprawny_wpis
             s = Student.new
@@ -158,6 +158,217 @@ class ModelStudentTest < Minitest::Test
             s2.student_number = 4
 
             assert_raises (Sequel::ValidationFailed) {(s2.save)}
+        end
+    end
+
+    class MenuHelpersTest < Minitest::Test
+        def setup
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
+
+        def test_drukowanie_studenta
+            s1 = Student.new
+            s1.firstname = 'Jan'
+            s1.lastname = 'Nowak'
+            s1.birthdate = DateTime.new(1970,1,1)
+            s1.student_class = '3A'
+            s1.student_number = 4
+            s1.save
+
+            exp = "Jan                  | Nowak                | 1970-01-01      | 3A         | 4              "
+            assert_equal exp,(s1.to_s)
+        end
+
+        def test_drukowanie_naglowka
+            exp = "Imię                 | Nazwisko             | Data urodzenia  | Klasa      | Numer w dzienniku\n----------------------------------------------------------------------------------------------"
+            assert_equal exp,(Student.print_header)
+        end
+    end
+
+    class QuerryTest < Minitest::Test
+        def setup
+            @dbs = DatabaseService.new Sequel.sqlite
+        end
+
+        def test_q_po_klasie_i_numerze_istnieje
+            s1 = Student.new
+            s1.firstname = 'Jan'
+            s1.lastname = 'Nowak'
+            s1.birthdate = DateTime.new(1970,1,1)
+            s1.student_class = '3A'
+            s1.student_number = 4
+            s1.save
+
+            assert_equal s1,(Student.get_by_class_and_number s1.student_class,s1.student_number)
+        end
+
+        def test_q_po_klasie_i_numerze_nie_istnieje
+            assert_nil (Student.get_by_class_and_number '1', 1)
+        end
+
+        def test_q_po_klasie_i_numerze_nieprawidlowe
+            invalid_data = [
+                [nil, nil],
+                [1, "test"],
+                ["fdsgds", "sfdgfds"],
+                [[1,2,3], [1]],
+                [nil, 4.0],
+                [1.0, 1.0],
+                [1, "1"]
+            ]
+
+            invalid_data.each do |data|
+                assert_nil (Student.get_by_class_and_number data[0],data[1])
+            end
+        end
+
+       def test_avg_z_przedmiotu
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
+
+            su = Subject.new
+            su.name = "Matematyka"
+            su.save
+
+            g = Grade.new
+            g.grade = '4-'
+            g.student = s
+            g.subject = su
+            g.date = DateTime.new(1970,1,1)
+            g.save
+
+            gg = Grade.new
+            gg.grade = '5-'
+            gg.student = s
+            gg.subject = su
+            gg.date = DateTime.new(1970,1,1)
+            gg.save
+
+            assert_in_delta 4.5,(s.get_avg_of_subject su),0.0001
+        end
+
+        def test_avg_z_przedmiotu_brak_ocen
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
+
+            su = Subject.new
+            su.name = "Matematyka"
+            su.save
+
+            assert_in_delta 0.0,(s.get_avg_of_subject su),0.0001
+        end
+
+        def test_przedmioty
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
+
+            su = Subject.new
+            su.name = "Matematyka"
+            su.save
+
+            su2 = Subject.new
+            su2.name = "Fizyka"
+            su2.save
+
+            g = Grade.new
+            g.grade = '4-'
+            g.student = s
+            g.subject = su
+            g.date = DateTime.new(1970,1,1)
+            g.save
+
+            gg = Grade.new
+            gg.grade = '5-'
+            gg.student = s
+            gg.subject = su
+            gg.date = DateTime.new(1970,1,1)
+            gg.save
+
+            assert_equal [su],(s.get_subjects)
+        end
+
+        def test_przedmioty_brak
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
+
+            su = Subject.new
+            su.name = "Matematyka"
+            su.save
+
+            assert_equal [],(s.get_subjects)
+        end
+
+        def test_avg_z_wszystkich_przedmiotów
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
+
+            su = Subject.new
+            su.name = "Matematyka"
+            su.save
+
+            su2 = Subject.new
+            su2.name = "Fizyka"
+            su2.save
+
+            g = Grade.new
+            g.grade = '4-'
+            g.student = s
+            g.subject = su
+            g.date = DateTime.new(1970,1,1)
+            g.save
+
+            gg = Grade.new
+            gg.grade = '5-'
+            gg.student = s
+            gg.subject = su
+            gg.date = DateTime.new(1970,1,1)
+            gg.save
+
+            ggg = Grade.new
+            ggg.grade = '2'
+            ggg.student = s
+            ggg.subject = su2
+            ggg.date = DateTime.new(1970,1,1)
+            ggg.save
+
+            assert_in_delta 3.25,(s.get_avg),0.0001
+        end
+
+        def test_avg_z_wszystkich_przedmiotów_brak
+            s = Student.new
+            s.firstname = 'Jan'
+            s.lastname = 'Kowalski'
+            s.birthdate = DateTime.new(1970,1,1)
+            s.student_class = '3A'
+            s.student_number = 4
+            s.save
+
+            assert_in_delta 0.0,(s.get_avg),0.0001
         end
     end
 end
