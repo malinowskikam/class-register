@@ -222,7 +222,7 @@ class ModelStudentTest < Minitest::Test
             end
         end
 
-       def test_avg_z_przedmiotu
+        def test_avg_z_przedmiotu
             s = Student.new
             s.firstname = 'Jan'
             s.lastname = 'Kowalski'
