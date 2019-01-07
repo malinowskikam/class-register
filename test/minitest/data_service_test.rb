@@ -1,26 +1,25 @@
 require File.join($__lib__,'database','data_service')
 
-describe 'Zarządzanie danymi' do
-    context 'obiekt managera' do 
-        it 'utworzenie' do
-            expect(DataService.new Sequel.sqlite).not_to be nil
+class DataServiceTest < Minitest::Test
+    class ManagerObjectObjectTest < Minitest::Test 
+        def test_utworzenie
+            refute_nil (DataService.new Sequel.sqlite)
         end
         
-        it 'testowanie połączenia' do
+        def test_polaczenia
             das = DataService.new Sequel.sqlite
-            expect(das.connected?).to be true
+            assert_equal true, (das.connected?)
         end
     end
 
-    context 'import z pliku' do
-        
-        before do
+    class FileImportTest < Minitest::Test
+        def setup
             @db = Sequel.sqlite
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
         end
 
-        it 'tabela students' do
+        def test_tabela_student
             f = File.open("temp.csv","w")
             f.write("1;Jan;Nowak;1970-01-01 00:00:00;1A;1\n");
             f.write("3;Bronisład;Dudziak;1970-01-03 00:00:00;1A;3\n");
@@ -32,10 +31,10 @@ describe 'Zarządzanie danymi' do
 
             File.delete 'temp.csv'
 
-            expect(Student.select.all.count).to eq 3
+            assert_equal 3,Student.select.all.count
         end
 
-        it 'tabela subjects' do
+        def test_tabela_subjects
             f = File.open("temp.csv","w")
             f.write("1;J. polski\n");
             f.write("3;Matematyka\n");
@@ -47,10 +46,10 @@ describe 'Zarządzanie danymi' do
 
             File.delete 'temp.csv'
 
-            expect(Subject.select.all.count).to eq 3
+            assert_equal 3,Subject.select.all.count
         end
 
-        it 'tabela notes' do
+        def test_tabela_notes
             f = File.open("temp.csv","w")
             f.write("1;Jan;Nowak;1970-01-01 00:00:00;1A;1\n");
             f.write("3;Bronisład;Dudziak;1970-01-03 00:00:00;1A;3\n");
@@ -71,10 +70,10 @@ describe 'Zarządzanie danymi' do
 
             File.delete 'temp.csv'
 
-            expect(Note.select.all.count).to eq 3
+            assert_equal 3,Note.select.all.count
         end
 
-        it 'tabela grades' do
+        def test_tabela_grades
             f = File.open("temp.csv","w")
             f.write("1;Jan;Nowak;1970-01-01 00:00:00;1A;1\n");
             f.write("3;Bronisład;Dudziak;1970-01-03 00:00:00;1A;3\n");
@@ -104,93 +103,89 @@ describe 'Zarządzanie danymi' do
 
             File.delete 'temp.csv'
 
-            expect(Grade.select.all.count).to eq 3
-
+            assert_equal 3,Grade.select.all.count
         end
     end
 
-    context 'import z ramu' do
-        before do
+    class RamImportTest < Minitest::Test
+        def setup
             @db = Sequel.sqlite
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
         end
 
-        it 'testowe dane' do
+        def test_testowe_dane
             @das.deploy_demo_data
 
-            expect(Student.select.all.count).not_to eq 0
-            expect(Note.select.all.count).not_to eq 0
-            expect(Grade.select.all.count).not_to eq 0
-            expect(Subject.select.all.count).not_to eq 0
+            refute_equal 0,Student.select.all.count
+            refute_equal 0,Note.select.all.count
+            refute_equal 0,Grade.select.all.count
+            refute_equal 0,Subject.select.all.count
         end
     end
 
-    context 'export do pliku' do
-        before do
+    class FileExportTest < Minitest::Test
+        def setup
             @db = Sequel.sqlite
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
             @testfile = "test.csv"
         end
 
-        it 'tabela students' do
+        def test_tabela_students
             @das.deploy_demo_data
             @das.export_data :students,@testfile
             lines = File.read(@testfile).each_line.count
             File.delete @testfile
-            expect(lines).to eq Student.select.all.count
+            assert_equal Student.select.all.count,lines
         end
 
-        it 'tabela subjects' do
+        def test_tabela_subjects
             @das.deploy_demo_data
             @das.export_data :subjects,@testfile
             lines = File.read(@testfile).each_line.count
             File.delete @testfile
-            expect(lines).to eq Subject.select.all.count
+            assert_equal Subject.select.all.count,lines        
         end
 
-        it 'tabela notes' do
+        def test_tabela_notes
             @das.deploy_demo_data
             @das.export_data :notes,@testfile
             lines = File.read(@testfile).each_line.count
             File.delete @testfile
-            expect(lines).to eq Note.select.all.count
+            assert_equal Note.select.all.count,lines        
         end
 
-        it 'tabela grades' do
+        def test_tabela_grades
             @das.deploy_demo_data
             @das.export_data :grades,@testfile
             lines = File.read(@testfile).each_line.count
             File.delete @testfile
-            expect(lines).to eq Grade.select.all.count
+            assert_equal Grade.select.all.count,lines        
         end
     end
 
-    context 'błędy inicjalizacji' do
-        let(:invalid_db) do
-            [nil,1,1.0,'1',"1",[nil,1]]
-        end
-
-        it 'nieprawidłowa baza' do
+    class InitializationErrorTest < Minitest::Test
+        def test_nieprawidlowa_baza
+            invalid_db = [nil,1,1.0,'1',"1",[nil,1]]
             invalid_db.each do |db|
-                expect{(DataService.new db)}.to raise_error ArgumentError
+                assert_raises (ArgumentError){(DataService.new db)}
             end
         end
 
-        it 'brak połączenia' do
-            expect{(DataService.new Sequel::Database.new)}.to raise_error StandardError
+        def test_brak_polaczenia
+            assert_raises(StandardError){(DataService.new Sequel::Database.new)}
         end
     end
 
-    context 'błędy importu' do
-        before do
+    class ImportErrorTest < Minitest::Test
+        def setup
             @db = Sequel.sqlite
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
         end
 
-        it 'nieprawidłowe źródła' do
+        def test_nieprawidlowe_zrodla
             nieprawidłowe_źródła = [
                 [:students,nil],
                 [:notes,nil],
@@ -211,15 +206,15 @@ describe 'Zarządzanie danymi' do
             ]
 
             nieprawidłowe_źródła.each do |line|
-                expect{(@das.import_data line[0],line[1])}.to raise_error InvalidSourceError
+                assert_raises(InvalidSourceError){(@das.import_data line[0],line[1])}
             end
         end
 
-        it 'nieprawidłowa tabela' do
-            expect{(@das.import_data :invalid_table, [[1],[2],[3]])}.to raise_error InvalidTableError
+        def test_nieprawidlowa_tabela
+            assert_raises(InvalidTableError){(@das.import_data :invalid_table, [[1],[2],[3]])}
         end
 
-        it 'nieprawidłowe linie w źródle' do
+        def test_nieprawidlowe_linie_w_zrodle
             nieprawidłowe_linie = [
                 [:students, [[1,'Jan',nil,DateTime.new(1970,1,1),'1',1]],[0,[1]]],
                 [:grades,[[1,Student.new {|s| s.id=1}, Subject.new {|s| s.id=1}, 5542, [1,2,3]]],[0,[1]]],
@@ -228,53 +223,54 @@ describe 'Zarządzanie danymi' do
             ]
             
             nieprawidłowe_linie.each do |line|
-                expect(@das.import_data line[0],line[1]).to eq line[2]
+                assert_equal line[2],(@das.import_data line[0],line[1])
             end
         end
 
-        it 'nieprawidłowe linie w plikach' do
+        def test_nieprawidlowe_linie_w_plikach
             f = File.open("temp.csv","w")
             f.write("1;Jan;Nowak;1970-01-01 00:00:00;rjf7834g587347g;1\n");
             f.close
-            expect(@das.import_data :students,"temp.csv").to eq [0,[1]]
+            assert_equal [0,[1]],(@das.import_data :students,"temp.csv")
 
             f = File.open("temp.csv","w")
             f.write("1;j polski\n");
             f.close
-            expect(@das.import_data :subjects,"temp.csv").to eq [0,[1]]
+            assert_equal [0,[1]],(@das.import_data :subjects,"temp.csv")
 
             f = File.open("temp.csv","w")
             f.write("1;1;1;48v348h848g4;1970-01-03 00:00:00\n");
             f.close
-            expect(@das.import_data :grades,"temp.csv").to eq [0,[1]]
+            assert_equal [0,[1]],(@das.import_data :grades,"temp.csv")
 
             f = File.open("temp.csv","w")
             f.write("1;1;Uwaga 1;data-jakas\n");
             f.close
-            expect(@das.import_data :notes,"temp.csv").to eq [0,[1]]
+            assert_equal [0,[1]],(@das.import_data :notes,"temp.csv")
             
             File.delete 'temp.csv'
         end
 
-        it 'nieistniejący plik źródła' do
-            expect{(@das.import_data :students, "nieistniejacyplik")}.to raise_error StandardError
+        def test_nieistniejacy_plik_zrodla
+            assert_raises(StandardError){(@das.import_data :students, "nieistniejacyplik")}
         end
     end
 
-    context 'błędy exportu' do
-        before do
+    class ExportErrorsTest < Minitest::Test
+        def setup
             @db = Sequel.sqlite
             @dbs = DatabaseService.new @db
             @das = DataService.new @db
+            @testfile = "test.csv"
         end
 
-        it 'nieprawidłowa tabela' do
-            expect{(@das.export_data :invalid_table, "temp.csv")}.to raise_error InvalidTableError
+        def test_nieprawidlowa_tabela
+            assert_raises(InvalidTableError){(@das.export_data :invalid_table, "temp.csv")}
             File.delete("temp.csv")
         end
 
-        it 'nienadpisywalny plik' do
-            expect{(@das.export_data :students, "\0")}.to raise_error ArgumentError
+        def test_nienadpisywalny_plik
+            assert_raises(ArgumentError){(@das.export_data :students, "\0")}
         end
     end
 end

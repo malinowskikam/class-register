@@ -1,23 +1,22 @@
 require File.join($__lib__,'database','database_service')
-class DatabaseTest < Minitest::Test
+class DatabaseServiceTest < Minitest::Test
 
-class DatabaseZarzadzanieTest < Minitest::Test 
+    class ManagerObjectTest < Minitest::Test 
         def test_utworzenie
             refute_nil (DatabaseService.new Sequel.sqlite)
         end
         
-        def testowanie_polaczenia
+        def test_polaczenia
             dbs = DatabaseService.new Sequel.sqlite
             assert_equal true, (dbs.connected?)
         end
     end
 
-    class DatabaseTworzenieTabelTest < Minitest::Test
-    def setup
-      @db = Sequel.sqlite
-      @dbs = DatabaseService.new @db
-    end
-
+    class TableTest < Minitest::Test
+        def setup
+            @db = Sequel.sqlite
+            @dbs = DatabaseService.new @db
+        end
 
         def test_tabela_students 
             assert_equal true, (@db.table_exists? :students)
@@ -27,7 +26,7 @@ class DatabaseZarzadzanieTest < Minitest::Test
             assert_equal true, (@db.table_exists? :notes)
         end
 
-	def test_tabela_grades 
+	    def test_tabela_grades 
             assert_equal true, (@db.table_exists? :grades)
         end
 
@@ -36,9 +35,9 @@ class DatabaseZarzadzanieTest < Minitest::Test
         end
     end
 
-    class DatabaseErrorTest < Minitest::Test
+    class ErrorTest < Minitest::Test
         def test_nieprawidlowa_baza
-	    invalid_db = [nil,1,1.0,'1',"1",[nil,1]]
+	        invalid_db = [nil,1,1.0,'1',"1",[nil,1]]
             invalid_db.each do |db|
                 assert_raises (ArgumentError) {(DatabaseService.new db)}
             end
