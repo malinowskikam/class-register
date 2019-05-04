@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/TestowanieRubyUG20182019/projektsemestralny-sanes.svg?token=zRmjzrZcqazckVXZMxKb&branch=master)](https://travis-ci.com/TestowanieRubyUG20182019/projektsemestralny-sanes)
+[![Build Status](https://travis-ci.com/malinowskikam/class-register.svg?branch=master)](https://travis-ci.com/malinowskikam/class-register)
 
 # Instalacja
 ```
